@@ -1,0 +1,1241 @@
+Folder PATH listing
+Volume serial number is 2256-DA06
+C:.
++---ALL_BUILD.dir
+¦   +---Debug
+¦   +---MinSizeRel
+¦   +---Release
+¦   +---RelWithDebInfo
++---build
+¦   +---.cmake
+¦   ¦   +---api
+¦   ¦       +---v1
+¦   ¦           +---query
+¦   ¦           ¦   +---client-vscode
+¦   ¦           +---reply
+¦   +---CMakeFiles
+¦       +---4.2.0
+¦       ¦   +---CompilerIdCXX
+¦       ¦   ¦   +---Debug
+¦       ¦   ¦   ¦   +---CompilerIdCXX.tlog
+¦       ¦   ¦   +---tmp
+¦       ¦   +---VCTargetsPath
+¦       ¦   ¦   +---x64
+¦       ¦   ¦       +---Debug
+¦       ¦   ¦           +---VCTargetsPath.tlog
+¦       ¦   +---x64
+¦       ¦       +---Debug
+¦       +---pkgRedirects
++---CMakeFiles
+¦   +---12ab4ace1607c3610e9c4880616c7b42
+¦   +---3ba85653c9398e2970de652ed38b6cd1
+¦   +---4.2.0
+¦   ¦   +---CompilerIdC
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   ¦   +---CompilerIdC.tlog
+¦   ¦   ¦   +---tmp
+¦   ¦   +---CompilerIdCXX
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   ¦   +---CompilerIdCXX.tlog
+¦   ¦   ¦   +---tmp
+¦   ¦   +---VCTargetsPath
+¦   ¦   ¦   +---x64
+¦   ¦   ¦       +---Debug
+¦   ¦   ¦           +---VCTargetsPath.tlog
+¦   ¦   +---x64
+¦   ¦       +---Debug
+¦   +---99ea3ad9cfa1498f784eef67d59d5398
+¦   +---9bd59fe4eeb92cfacc76ff756b07e715
+¦   +---d3040f5494505d70bd8c72d61f0370a4
+¦   +---d6e1a8bd6691a3d5c84555e259df315d
+¦   +---pkgRedirects
++---draco
++---images
++---INSTALL.dir
+¦   +---Debug
+¦   +---MinSizeRel
+¦   +---Release
+¦   +---RelWithDebInfo
++---lib
+¦   +---brotli
+¦   ¦   +---c
+¦   ¦   ¦   +---common
+¦   ¦   ¦   +---dec
+¦   ¦   ¦   +---enc
+¦   ¦   ¦   +---include
+¦   ¦   ¦   ¦   +---brotli
+¦   ¦   ¦   +---tools
+¦   ¦   +---docs
+¦   ¦   +---go
+¦   ¦   ¦   +---brotli
+¦   ¦   ¦   +---cbrotli
+¦   ¦   +---python
+¦   ¦   ¦   +---tests
+¦   ¦   +---scripts
+¦   ¦   +---tests
+¦   ¦       +---testdata
+¦   +---bzip2
+¦   +---curl
+¦   ¦   +---.circleci
+¦   ¦   +---.github
+¦   ¦   ¦   +---ISSUE_TEMPLATE
+¦   ¦   ¦   +---scripts
+¦   ¦   ¦   +---workflows
+¦   ¦   +---CMake
+¦   ¦   +---docs
+¦   ¦   ¦   +---cmdline-opts
+¦   ¦   ¦   +---examples
+¦   ¦   ¦   +---internals
+¦   ¦   ¦   +---libcurl
+¦   ¦   ¦   ¦   +---opts
+¦   ¦   ¦   +---tests
+¦   ¦   +---include
+¦   ¦   ¦   +---curl
+¦   ¦   +---lib
+¦   ¦   ¦   +---curlx
+¦   ¦   ¦   +---vauth
+¦   ¦   ¦   +---vquic
+¦   ¦   ¦   +---vssh
+¦   ¦   ¦   +---vtls
+¦   ¦   +---LICENSES
+¦   ¦   +---m4
+¦   ¦   +---packages
+¦   ¦   ¦   +---OS400
+¦   ¦   ¦   ¦   +---rpg-examples
+¦   ¦   ¦   +---vms
+¦   ¦   +---plan9
+¦   ¦   ¦   +---include
+¦   ¦   ¦   +---lib
+¦   ¦   ¦   +---src
+¦   ¦   +---projects
+¦   ¦   ¦   +---Windows
+¦   ¦   ¦       +---tmpl
+¦   ¦   +---scripts
+¦   ¦   +---src
+¦   ¦   +---tests
+¦   ¦       +---certs
+¦   ¦       +---cmake
+¦   ¦       +---data
+¦   ¦       +---http
+¦   ¦       ¦   +---testenv
+¦   ¦       ¦       +---mod_curltest
+¦   ¦       +---libtest
+¦   ¦       +---server
+¦   ¦       +---tunit
+¦   ¦       +---unit
+¦   +---draco
+¦   ¦   +---.github
+¦   ¦   ¦   +---workflows
+¦   ¦   +---cmake
+¦   ¦   ¦   +---toolchains
+¦   ¦   +---docs
+¦   ¦   ¦   +---artwork
+¦   ¦   ¦   ¦   +---favicon
+¦   ¦   ¦   +---assets
+¦   ¦   ¦   ¦   +---css
+¦   ¦   ¦   ¦   ¦   +---pygments
+¦   ¦   ¦   ¦   +---js
+¦   ¦   ¦   +---spec
+¦   ¦   ¦   ¦   +---images
+¦   ¦   ¦   +---unity
+¦   ¦   ¦   ¦   +---images
+¦   ¦   ¦   +---_includes
+¦   ¦   ¦   +---_layouts
+¦   ¦   +---javascript
+¦   ¦   ¦   +---example
+¦   ¦   ¦   ¦   +---models
+¦   ¦   ¦   +---npm
+¦   ¦   ¦   ¦   +---draco3d
+¦   ¦   ¦   ¦   +---draco3dgltf
+¦   ¦   ¦   +---with_asserts
+¦   ¦   +---maya
+¦   ¦   +---src
+¦   ¦   ¦   +---draco
+¦   ¦   ¦       +---animation
+¦   ¦   ¦       +---attributes
+¦   ¦   ¦       +---compression
+¦   ¦   ¦       ¦   +---attributes
+¦   ¦   ¦       ¦   ¦   +---prediction_schemes
+¦   ¦   ¦       ¦   +---bit_coders
+¦   ¦   ¦       ¦   +---config
+¦   ¦   ¦       ¦   +---entropy
+¦   ¦   ¦       ¦   +---mesh
+¦   ¦   ¦       ¦   ¦   +---traverser
+¦   ¦   ¦       ¦   +---point_cloud
+¦   ¦   ¦       ¦       +---algorithms
+¦   ¦   ¦       +---core
+¦   ¦   ¦       +---io
+¦   ¦   ¦       +---javascript
+¦   ¦   ¦       ¦   +---emscripten
+¦   ¦   ¦       +---material
+¦   ¦   ¦       +---maya
+¦   ¦   ¦       +---mesh
+¦   ¦   ¦       +---metadata
+¦   ¦   ¦       +---point_cloud
+¦   ¦   ¦       +---scene
+¦   ¦   ¦       +---texture
+¦   ¦   ¦       +---tools
+¦   ¦   ¦       ¦   +---fuzz
+¦   ¦   ¦       ¦   +---install_test
+¦   ¦   ¦       +---unity
+¦   ¦   +---testdata
+¦   ¦   ¦   +---Box
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   ¦   +---glTF_Binary
+¦   ¦   ¦   +---BoxesMeta
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   +---BoxMeta
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   +---BoxMetaDraco
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   +---CesiumMan
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   ¦   +---glTF_Binary
+¦   ¦   ¦   +---CesiumMilkTruck
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   +---CubeScaledInstances
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   +---DuplicateMeshes
+¦   ¦   ¦   +---Fox
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   +---glTF
+¦   ¦   ¦   ¦   +---KhrTextureTransformWithFallback
+¦   ¦   ¦   ¦   +---TextureTransformTestWithRequired
+¦   ¦   ¦   +---InterpolationTest
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   +---KhronosSampleModels
+¦   ¦   ¦   ¦   +---AnimatedMorphCube
+¦   ¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   ¦   +---DragonAttenuation
+¦   ¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   ¦   ¦   +---glTF_Binary
+¦   ¦   ¦   ¦   +---Duck
+¦   ¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   ¦   ¦   +---glTF_Binary
+¦   ¦   ¦   ¦   +---SheenCloth
+¦   ¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   ¦   ¦   +---glTF_Binary
+¦   ¦   ¦   ¦   +---SimpleSparseAccessor
+¦   ¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   ¦   +---SpecGlossVsMetalRough
+¦   ¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   ¦   +---TextureSettingsTest
+¦   ¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   ¦   +---TextureTransformTest
+¦   ¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   ¦   +---UnlitTest
+¦   ¦   ¦   ¦       +---glTF
+¦   ¦   ¦   +---Lantern
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   +---MultiUVTest
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   +---pbr_next
+¦   ¦   ¦   ¦   +---sphere
+¦   ¦   ¦   ¦       +---glTF
+¦   ¦   ¦   +---SphereAllSame
+¦   ¦   ¦   +---SpheresScaledInstances
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   +---SphereTwoMaterials
+¦   ¦   ¦   +---SphereWithCircleTexture
+¦   ¦   ¦   +---STL
+¦   ¦   ¦   +---three_meshes_two_materials_one_no_material
+¦   ¦   ¦   +---Triangle
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   +---TwoSidedPlane
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   +---UnlitWithFallback
+¦   ¦   ¦   ¦   +---one_material_all_fallback
+¦   ¦   ¦   ¦   +---three_materials_all_fallback
+¦   ¦   ¦   ¦   +---three_materials_one_fallback
+¦   ¦   ¦   +---UnusedTexCoords
+¦   ¦   ¦   +---VertexColorTest
+¦   ¦   ¦   ¦   +---glTF
+¦   ¦   ¦   +---ZeroLengthBufferView
+¦   ¦   +---third_party
+¦   ¦   ¦   +---eigen
+¦   ¦   ¦   +---filesystem
+¦   ¦   ¦   +---googletest
+¦   ¦   ¦   +---tinygltf
+¦   ¦   +---unity
+¦   ¦       +---Editor
+¦   ¦       +---Plugin
+¦   ¦       +---Resources
+¦   +---freetype
+¦   ¦   +---builds
+¦   ¦   ¦   +---amiga
+¦   ¦   ¦   ¦   +---include
+¦   ¦   ¦   ¦   ¦   +---config
+¦   ¦   ¦   ¦   +---src
+¦   ¦   ¦   ¦       +---base
+¦   ¦   ¦   +---ansi
+¦   ¦   ¦   +---atari
+¦   ¦   ¦   +---beos
+¦   ¦   ¦   +---cmake
+¦   ¦   ¦   +---compiler
+¦   ¦   ¦   +---dos
+¦   ¦   ¦   +---mac
+¦   ¦   ¦   +---meson
+¦   ¦   ¦   +---os2
+¦   ¦   ¦   +---symbian
+¦   ¦   ¦   +---unix
+¦   ¦   ¦   +---vms
+¦   ¦   ¦   +---wince
+¦   ¦   ¦   ¦   +---vc2005-ce
+¦   ¦   ¦   ¦   +---vc2008-ce
+¦   ¦   ¦   +---windows
+¦   ¦   ¦       +---vc2010
+¦   ¦   ¦       +---visualc
+¦   ¦   ¦       +---visualce
+¦   ¦   +---devel
+¦   ¦   +---docs
+¦   ¦   ¦   +---markdown
+¦   ¦   ¦   ¦   +---images
+¦   ¦   ¦   ¦   +---javascripts
+¦   ¦   ¦   ¦   +---stylesheets
+¦   ¦   ¦   +---oldlogs
+¦   ¦   +---include
+¦   ¦   ¦   +---freetype
+¦   ¦   ¦       +---config
+¦   ¦   ¦       +---internal
+¦   ¦   ¦           +---services
+¦   ¦   +---objs
+¦   ¦   +---src
+¦   ¦   ¦   +---autofit
+¦   ¦   ¦   +---base
+¦   ¦   ¦   +---bdf
+¦   ¦   ¦   +---bzip2
+¦   ¦   ¦   +---cache
+¦   ¦   ¦   +---cff
+¦   ¦   ¦   +---cid
+¦   ¦   ¦   +---dlg
+¦   ¦   ¦   +---gxvalid
+¦   ¦   ¦   +---gzip
+¦   ¦   ¦   ¦   +---patches
+¦   ¦   ¦   +---lzw
+¦   ¦   ¦   +---otvalid
+¦   ¦   ¦   +---pcf
+¦   ¦   ¦   +---pfr
+¦   ¦   ¦   +---psaux
+¦   ¦   ¦   +---pshinter
+¦   ¦   ¦   +---psnames
+¦   ¦   ¦   +---raster
+¦   ¦   ¦   +---sdf
+¦   ¦   ¦   +---sfnt
+¦   ¦   ¦   +---smooth
+¦   ¦   ¦   +---svg
+¦   ¦   ¦   +---tools
+¦   ¦   ¦   ¦   +---ftrandom
+¦   ¦   ¦   +---truetype
+¦   ¦   ¦   +---type1
+¦   ¦   ¦   +---type42
+¦   ¦   ¦   +---winfonts
+¦   ¦   +---subprojects
+¦   ¦   ¦   +---dlg
+¦   ¦   +---tests
+¦   ¦       +---issue-1063
+¦   ¦       +---scripts
+¦   +---glslang
+¦   ¦   +---.github
+¦   ¦   ¦   +---workflows
+¦   ¦   +---build_overrides
+¦   ¦   +---External
+¦   ¦   +---glslang
+¦   ¦   ¦   +---CInterface
+¦   ¦   ¦   +---ExtensionHeaders
+¦   ¦   ¦   +---GenericCodeGen
+¦   ¦   ¦   +---HLSL
+¦   ¦   ¦   +---Include
+¦   ¦   ¦   +---MachineIndependent
+¦   ¦   ¦   ¦   +---preprocessor
+¦   ¦   ¦   +---OSDependent
+¦   ¦   ¦   ¦   +---Unix
+¦   ¦   ¦   ¦   +---Web
+¦   ¦   ¦   ¦   +---Windows
+¦   ¦   ¦   +---Public
+¦   ¦   ¦   +---ResourceLimits
+¦   ¦   +---gtests
+¦   ¦   +---kokoro
+¦   ¦   ¦   +---android-ndk-build
+¦   ¦   ¦   +---license-check
+¦   ¦   ¦   +---linux-clang-cmake
+¦   ¦   ¦   ¦   +---shared
+¦   ¦   ¦   ¦   +---static
+¦   ¦   ¦   +---linux-clang-gn
+¦   ¦   ¦   +---linux-gcc-cmake
+¦   ¦   ¦       +---shared
+¦   ¦   ¦       +---static
+¦   ¦   +---ndk_test
+¦   ¦   ¦   +---jni
+¦   ¦   +---SPIRV
+¦   ¦   ¦   +---CInterface
+¦   ¦   +---StandAlone
+¦   ¦   +---Test
+¦   ¦       +---baseLegalResults
+¦   ¦       +---baseResults
+¦   ¦       +---find_package
+¦   ¦       +---inc1
+¦   ¦       ¦   +---path1
+¦   ¦       ¦   +---path2
+¦   ¦       +---inc2
+¦   +---KTX
+¦   ¦   +---.github
+¦   ¦   ¦   +---workflows
+¦   ¦   +---cmake
+¦   ¦   ¦   +---modules
+¦   ¦   +---examples
+¦   ¦   +---external
+¦   ¦   ¦   +---astc-encoder
+¦   ¦   ¦   ¦   +---.github
+¦   ¦   ¦   ¦   ¦   +---workflows
+¦   ¦   ¦   ¦   +---Docs
+¦   ¦   ¦   ¦   ¦   +---ChangeLogImg
+¦   ¦   ¦   ¦   ¦   +---FormatOverviewImg
+¦   ¦   ¦   ¦   +---Source
+¦   ¦   ¦   ¦   ¦   +---Fuzzers
+¦   ¦   ¦   ¦   ¦   +---ThirdParty
+¦   ¦   ¦   ¦   ¦   +---UnitTest
+¦   ¦   ¦   ¦   +---Test
+¦   ¦   ¦   ¦   ¦   +---Data
+¦   ¦   ¦   ¦   ¦   ¦   +---Tiles
+¦   ¦   ¦   ¦   ¦   +---DocSource
+¦   ¦   ¦   ¦   ¦   +---Images
+¦   ¦   ¦   ¦   ¦   ¦   +---HDRIHaven
+¦   ¦   ¦   ¦   ¦   ¦   ¦   +---HDR-RGB
+¦   ¦   ¦   ¦   ¦   ¦   +---Khronos
+¦   ¦   ¦   ¦   ¦   ¦   ¦   +---LDR-L
+¦   ¦   ¦   ¦   ¦   ¦   ¦   +---LDR-RGB
+¦   ¦   ¦   ¦   ¦   ¦   ¦   +---LDR-RGBA
+¦   ¦   ¦   ¦   ¦   ¦   ¦   +---LDR-XY
+¦   ¦   ¦   ¦   ¦   ¦   +---Kodak
+¦   ¦   ¦   ¦   ¦   ¦   +---KodakMnt
+¦   ¦   ¦   ¦   ¦   ¦   +---KodakSim
+¦   ¦   ¦   ¦   ¦   ¦   +---Small
+¦   ¦   ¦   ¦   ¦   ¦       +---HDR-RGB
+¦   ¦   ¦   ¦   ¦   ¦       +---HDR-RGBA
+¦   ¦   ¦   ¦   ¦   ¦       +---LDR-L
+¦   ¦   ¦   ¦   ¦   ¦       +---LDR-RGB
+¦   ¦   ¦   ¦   ¦   ¦       +---LDR-RGBA
+¦   ¦   ¦   ¦   ¦   ¦       +---LDR-XY
+¦   ¦   ¦   ¦   ¦   ¦       +---LDRS-RGBA
+¦   ¦   ¦   ¦   ¦   +---testlib
+¦   ¦   ¦   ¦   +---Utils
+¦   ¦   ¦   ¦       +---Example
+¦   ¦   ¦   +---basisu
+¦   ¦   ¦   ¦   +---.reuse
+¦   ¦   ¦   ¦   +---bin
+¦   ¦   ¦   ¦   +---contrib
+¦   ¦   ¦   ¦   ¦   +---previewers
+¦   ¦   ¦   ¦   ¦   ¦   +---lib
+¦   ¦   ¦   ¦   ¦   ¦   +---win
+¦   ¦   ¦   ¦   ¦   +---single_file_transcoder
+¦   ¦   ¦   ¦   ¦       +---examples
+¦   ¦   ¦   ¦   +---encoder
+¦   ¦   ¦   ¦   +---LICENSES
+¦   ¦   ¦   ¦   +---OpenCL
+¦   ¦   ¦   ¦   ¦   +---CL
+¦   ¦   ¦   ¦   ¦   +---lib
+¦   ¦   ¦   ¦   +---spec
+¦   ¦   ¦   ¦   +---test_files
+¦   ¦   ¦   ¦   +---transcoder
+¦   ¦   ¦   ¦   +---webgl
+¦   ¦   ¦   ¦   ¦   +---encoder
+¦   ¦   ¦   ¦   ¦   ¦   +---build
+¦   ¦   ¦   ¦   ¦   +---encode_test
+¦   ¦   ¦   ¦   ¦   ¦   +---assets
+¦   ¦   ¦   ¦   ¦   +---gltf
+¦   ¦   ¦   ¦   ¦   ¦   +---assets
+¦   ¦   ¦   ¦   ¦   +---ktx2_encode_test
+¦   ¦   ¦   ¦   ¦   ¦   +---assets
+¦   ¦   ¦   ¦   ¦   +---texture
+¦   ¦   ¦   ¦   ¦   ¦   +---assets
+¦   ¦   ¦   ¦   ¦   +---transcoder
+¦   ¦   ¦   ¦   ¦       +---build
+¦   ¦   ¦   ¦   +---webgl_videotest
+¦   ¦   ¦   ¦   +---zstd
+¦   ¦   ¦   +---cxxopts
+¦   ¦   ¦   ¦   +---cmake
+¦   ¦   ¦   ¦   +---include
+¦   ¦   ¦   +---dfdutils
+¦   ¦   ¦   ¦   +---.reuse
+¦   ¦   ¦   ¦   +---KHR
+¦   ¦   ¦   ¦   +---LICENSES
+¦   ¦   ¦   ¦   +---vulkan
+¦   ¦   ¦   +---etcdec
+¦   ¦   ¦   +---fmt
+¦   ¦   ¦   ¦   +---.github
+¦   ¦   ¦   ¦   ¦   +---workflows
+¦   ¦   ¦   ¦   +---doc
+¦   ¦   ¦   ¦   +---include
+¦   ¦   ¦   ¦   ¦   +---fmt
+¦   ¦   ¦   ¦   +---src
+¦   ¦   ¦   ¦   +---support
+¦   ¦   ¦   ¦   ¦   +---bazel
+¦   ¦   ¦   ¦   ¦   +---cmake
+¦   ¦   ¦   ¦   ¦   +---python
+¦   ¦   ¦   ¦   ¦       +---mkdocstrings_handlers
+¦   ¦   ¦   ¦   ¦           +---cxx
+¦   ¦   ¦   ¦   ¦               +---templates
+¦   ¦   ¦   ¦   +---test
+¦   ¦   ¦   ¦       +---add-subdirectory-test
+¦   ¦   ¦   ¦       +---compile-error-test
+¦   ¦   ¦   ¦       +---cuda-test
+¦   ¦   ¦   ¦       +---find-package-test
+¦   ¦   ¦   ¦       +---fuzzing
+¦   ¦   ¦   ¦       +---gtest
+¦   ¦   ¦   ¦       ¦   +---gmock
+¦   ¦   ¦   ¦       ¦   +---gtest
+¦   ¦   ¦   ¦       +---static-export-test
+¦   ¦   ¦   +---lodepng
+¦   ¦   ¦   ¦   +---examples
+¦   ¦   ¦   +---SDL_gesture
+¦   ¦   +---icons
+¦   ¦   ¦   +---ios
+¦   ¦   ¦   ¦   +---CommonIcons.xcassets
+¦   ¦   ¦   ¦       +---ktx_app.appiconset
+¦   ¦   ¦   ¦       +---ktx_document.appiconset
+¦   ¦   ¦   +---linux
+¦   ¦   ¦   +---mac
+¦   ¦   ¦   +---win
+¦   ¦   +---include
+¦   ¦   ¦   +---KHR
+¦   ¦   +---interface
+¦   ¦   ¦   +---basisu_c_binding
+¦   ¦   ¦   ¦   +---inc
+¦   ¦   ¦   ¦   +---src
+¦   ¦   ¦   +---java_binding
+¦   ¦   ¦   ¦   +---src
+¦   ¦   ¦   ¦       +---main
+¦   ¦   ¦   ¦       ¦   +---cpp
+¦   ¦   ¦   ¦       ¦   +---java
+¦   ¦   ¦   ¦       ¦       +---org
+¦   ¦   ¦   ¦       ¦           +---khronos
+¦   ¦   ¦   ¦       ¦               +---ktx
+¦   ¦   ¦   ¦       +---test
+¦   ¦   ¦   ¦           +---java
+¦   ¦   ¦   ¦               +---org
+¦   ¦   ¦   ¦                   +---khronos
+¦   ¦   ¦   ¦                       +---ktx
+¦   ¦   ¦   ¦                           +---test
+¦   ¦   ¦   +---js_binding
+¦   ¦   ¦   +---python_binding
+¦   ¦   ¦       +---pyktx
+¦   ¦   ¦       +---tests
+¦   ¦   ¦       +---_static
+¦   ¦   +---lib
+¦   ¦   +---LICENSES
+¦   ¦   +---other_include
+¦   ¦   ¦   +---EGL
+¦   ¦   ¦   +---GL
+¦   ¦   ¦   +---GLES
+¦   ¦   ¦   +---GLES2
+¦   ¦   ¦   +---GLES3
+¦   ¦   ¦   +---glm
+¦   ¦   ¦   ¦   +---detail
+¦   ¦   ¦   ¦   +---gtc
+¦   ¦   ¦   ¦   +---gtx
+¦   ¦   ¦   ¦   +---simd
+¦   ¦   ¦   +---KHR
+¦   ¦   ¦   +---stb
+¦   ¦   ¦   +---vma
+¦   ¦   +---pkgdoc
+¦   ¦   ¦   +---icons
+¦   ¦   +---scripts
+¦   ¦   +---tests
+¦   ¦   ¦   +---badktx2
+¦   ¦   ¦   +---cts
+¦   ¦   ¦   +---gtest
+¦   ¦   ¦   ¦   +---include
+¦   ¦   ¦   ¦   ¦   +---gtest
+¦   ¦   ¦   ¦   ¦       +---internal
+¦   ¦   ¦   ¦   ¦           +---custom
+¦   ¦   ¦   ¦   +---src
+¦   ¦   ¦   +---ktxdiff
+¦   ¦   ¦   +---loadtests
+¦   ¦   ¦   ¦   +---appfwSDL
+¦   ¦   ¦   ¦   ¦   +---VulkanAppSDL
+¦   ¦   ¦   ¦   ¦       +---mac
+¦   ¦   ¦   ¦   ¦       ¦   +---vulkan
+¦   ¦   ¦   ¦   ¦       ¦       +---explicit_layer.d
+¦   ¦   ¦   ¦   ¦       ¦       +---icd.d
+¦   ¦   ¦   ¦   ¦       +---shaders
+¦   ¦   ¦   ¦   +---common
+¦   ¦   ¦   ¦   ¦   +---models
+¦   ¦   ¦   ¦   +---geom
+¦   ¦   ¦   ¦   +---glloadtests
+¦   ¦   ¦   ¦   ¦   +---gles1
+¦   ¦   ¦   ¦   ¦   +---resources
+¦   ¦   ¦   ¦   ¦   ¦   +---ios
+¦   ¦   ¦   ¦   ¦   ¦   ¦   +---LaunchImages.xcassets
+¦   ¦   ¦   ¦   ¦   ¦   ¦       +---LaunchImage.launchimage
+¦   ¦   ¦   ¦   ¦   ¦   +---linux
+¦   ¦   ¦   ¦   ¦   ¦   +---mac
+¦   ¦   ¦   ¦   ¦   ¦   +---win
+¦   ¦   ¦   ¦   ¦   +---shader-based
+¦   ¦   ¦   ¦   ¦   +---utils
+¦   ¦   ¦   ¦   +---image-masters
+¦   ¦   ¦   ¦   +---vkloadtests
+¦   ¦   ¦   ¦       +---resources
+¦   ¦   ¦   ¦       ¦   +---ios
+¦   ¦   ¦   ¦       ¦   ¦   +---LaunchImages.xcassets
+¦   ¦   ¦   ¦       ¦   ¦       +---LaunchImage.launchimage
+¦   ¦   ¦   ¦       ¦   +---linux
+¦   ¦   ¦   ¦       ¦   +---mac
+¦   ¦   ¦   ¦       ¦   +---win
+¦   ¦   ¦   ¦       +---shaders
+¦   ¦   ¦   ¦       ¦   +---cube
+¦   ¦   ¦   ¦       ¦   +---cubemap
+¦   ¦   ¦   ¦       ¦   +---texture
+¦   ¦   ¦   ¦       ¦   +---texture3d
+¦   ¦   ¦   ¦       ¦   +---texturearray
+¦   ¦   ¦   ¦       ¦   +---texturemipmap
+¦   ¦   ¦   ¦       +---utils
+¦   ¦   ¦   +---srcimages
+¦   ¦   ¦   ¦   +---GoldenGateBridge3
+¦   ¦   ¦   ¦   +---Iron_Bars
+¦   ¦   ¦   ¦   +---Yokohama3
+¦   ¦   ¦   +---streamtests
+¦   ¦   ¦   +---testimages
+¦   ¦   ¦   +---texturetests
+¦   ¦   ¦   +---transcodetests
+¦   ¦   ¦   +---unittests
+¦   ¦   ¦   +---webgl
+¦   ¦   ¦       +---libktx-gltf
+¦   ¦   ¦       ¦   +---assets
+¦   ¦   ¦       +---libktx-read-webgl
+¦   ¦   ¦       +---libktx-webgl
+¦   ¦   ¦       +---llt-three
+¦   ¦   +---tools
+¦   ¦   ¦   +---imageio
+¦   ¦   ¦   ¦   +---exr.imageio
+¦   ¦   ¦   ¦   +---jpg.imageio
+¦   ¦   ¦   ¦   +---npbm.imageio
+¦   ¦   ¦   ¦   +---png.imageio
+¦   ¦   ¦   +---ktx
+¦   ¦   ¦   ¦   +---schema
+¦   ¦   ¦   +---ktx2check
+¦   ¦   ¦   +---ktx2ktx2
+¦   ¦   ¦   +---ktxinfo
+¦   ¦   ¦   +---ktxsc
+¦   ¦   ¦   +---package
+¦   ¦   ¦   ¦   +---mac
+¦   ¦   ¦   ¦       +---Resources
+¦   ¦   ¦   ¦       +---summary.rtfd
+¦   ¦   ¦   +---toktx
+¦   ¦   +---utils
+¦   ¦   +---vcpkg-triplets
+¦   +---libidn2
+¦   ¦   +---contrib
+¦   ¦   +---doc
+¦   ¦   ¦   +---reference
+¦   ¦   +---examples
+¦   ¦   +---fuzz
+¦   ¦   ¦   +---libidn2_register_fuzzer.in
+¦   ¦   ¦   +---libidn2_to_ascii_8z_fuzzer.in
+¦   ¦   ¦   +---libidn2_to_ascii_8z_fuzzer.repro
+¦   ¦   ¦   +---libidn2_to_unicode_8z8z_fuzzer.in
+¦   ¦   +---gl
+¦   ¦   ¦   +---build-aux
+¦   ¦   ¦   +---top
+¦   ¦   +---lib
+¦   ¦   +---m4
+¦   ¦   +---po
+¦   ¦   +---src
+¦   ¦   +---tests
+¦   ¦   +---unistring
+¦   ¦       +---lib
+¦   ¦           +---uninorm
+¦   ¦           +---unistr
+¦   +---libpng
+¦   ¦   +---.github
+¦   ¦   ¦   +---workflows
+¦   ¦   +---arm
+¦   ¦   +---ci
+¦   ¦   ¦   +---lib
+¦   ¦   ¦   +---libexec
+¦   ¦   ¦   +---targets
+¦   ¦   ¦       +---android
+¦   ¦   ¦       +---cygwin
+¦   ¦   ¦       +---darwin
+¦   ¦   ¦       +---freebsd
+¦   ¦   ¦       +---linux
+¦   ¦   ¦       +---msdos
+¦   ¦   ¦       +---windows
+¦   ¦   +---contrib
+¦   ¦   ¦   +---arm-neon
+¦   ¦   ¦   +---conftest
+¦   ¦   ¦   +---examples
+¦   ¦   ¦   +---gregbook
+¦   ¦   ¦   +---libtests
+¦   ¦   ¦   +---mips-mmi
+¦   ¦   ¦   +---mips-msa
+¦   ¦   ¦   +---oss-fuzz
+¦   ¦   ¦   +---pngexif
+¦   ¦   ¦   +---pngminim
+¦   ¦   ¦   ¦   +---decoder
+¦   ¦   ¦   ¦   +---encoder
+¦   ¦   ¦   ¦   +---preader
+¦   ¦   ¦   +---pngminus
+¦   ¦   ¦   +---pngsuite
+¦   ¦   ¦   ¦   +---interlaced
+¦   ¦   ¦   +---powerpc-vsx
+¦   ¦   ¦   +---testpngs
+¦   ¦   ¦   ¦   +---badpal
+¦   ¦   ¦   ¦   +---crashers
+¦   ¦   ¦   ¦   +---png-3
+¦   ¦   ¦   +---tools
+¦   ¦   ¦   +---visupng
+¦   ¦   +---intel
+¦   ¦   +---loongarch
+¦   ¦   +---mips
+¦   ¦   +---powerpc
+¦   ¦   +---projects
+¦   ¦   ¦   +---owatcom
+¦   ¦   ¦   +---visualc71
+¦   ¦   ¦   +---vstudio
+¦   ¦   ¦       +---libpng
+¦   ¦   ¦       +---pnglibconf
+¦   ¦   ¦       +---pngstest
+¦   ¦   ¦       +---pngtest
+¦   ¦   ¦       +---pngunknown
+¦   ¦   ¦       +---pngvalid
+¦   ¦   ¦       +---zlib
+¦   ¦   +---riscv
+¦   ¦   +---scripts
+¦   ¦   ¦   +---autoconf
+¦   ¦   ¦   +---cmake
+¦   ¦   +---tests
+¦   +---lua
+¦   ¦   +---doc
+¦   ¦   +---src
+¦   +---nghttp2
+¦   ¦   +---.github
+¦   ¦   ¦   +---workflows
+¦   ¦   +---bpf
+¦   ¦   +---cmake
+¦   ¦   +---contrib
+¦   ¦   +---doc
+¦   ¦   ¦   +---bash_completion
+¦   ¦   ¦   +---sources
+¦   ¦   ¦   +---_exts
+¦   ¦   ¦       +---rubydomain
+¦   ¦   +---docker
+¦   ¦   +---examples
+¦   ¦   +---fedora
+¦   ¦   +---fuzz
+¦   ¦   ¦   +---corpus
+¦   ¦   ¦       +---h2spec
+¦   ¦   ¦       +---nghttp
+¦   ¦   +---integration-tests
+¦   ¦   +---lib
+¦   ¦   ¦   +---includes
+¦   ¦   ¦       +---nghttp2
+¦   ¦   +---m4
+¦   ¦   +---src
+¦   ¦   ¦   +---testdata
+¦   ¦   +---tests
+¦   ¦   ¦   +---munit
+¦   ¦   ¦   +---testdata
+¦   ¦   +---third-party
+¦   ¦       +---llhttp
+¦   ¦       ¦   +---include
+¦   ¦       ¦   +---src
+¦   ¦       +---mruby
+¦   ¦       +---neverbleed
+¦   ¦       +---urlparse
+¦   +---vsgXchange
+¦   ¦   +---ALL_BUILD.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---applications
+¦   ¦   ¦   +---vsgconv
+¦   ¦   ¦       +---CMakeFiles
+¦   ¦   ¦       +---INSTALL.dir
+¦   ¦   ¦       ¦   +---Debug
+¦   ¦   ¦       ¦   +---MinSizeRel
+¦   ¦   ¦       ¦   +---Release
+¦   ¦   ¦       ¦   +---RelWithDebInfo
+¦   ¦   ¦       +---vsgconv.dir
+¦   ¦   ¦           +---Debug
+¦   ¦   ¦           +---MinSizeRel
+¦   ¦   ¦           +---Release
+¦   ¦   ¦           +---RelWithDebInfo
+¦   ¦   +---bin
+¦   ¦   +---CMakeFiles
+¦   ¦   +---cppcheck-vsgXchange.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---docs-vsgXchange.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---include
+¦   ¦   ¦   +---vsgXchange
+¦   ¦   +---INSTALL.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---lib
+¦   ¦   +---src
+¦   ¦   ¦   +---3DTiles
+¦   ¦   ¦   +---all
+¦   ¦   ¦   +---assimp
+¦   ¦   ¦   +---bin
+¦   ¦   ¦   +---CMakeFiles
+¦   ¦   ¦   ¦   +---Export
+¦   ¦   ¦   ¦       +---1b03160a05e5890c9a42668a1c220ae0
+¦   ¦   ¦   +---cpp
+¦   ¦   ¦   +---curl
+¦   ¦   ¦   +---dds
+¦   ¦   ¦   +---freetype
+¦   ¦   ¦   +---gdal
+¦   ¦   ¦   +---gltf
+¦   ¦   ¦   +---images
+¦   ¦   ¦   +---INSTALL.dir
+¦   ¦   ¦   ¦   +---Debug
+¦   ¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   ¦   +---Release
+¦   ¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   ¦   +---ktx
+¦   ¦   ¦   +---models
+¦   ¦   ¦   +---openexr
+¦   ¦   ¦   +---stbi
+¦   ¦   ¦   +---vsgXchange.dir
+¦   ¦   ¦       +---Debug
+¦   ¦   ¦       +---MinSizeRel
+¦   ¦   ¦       +---Release
+¦   ¦   ¦       +---RelWithDebInfo
+¦   ¦   +---uninstall-vsgXchange.dir
+¦   ¦       +---Debug
+¦   ¦       +---MinSizeRel
+¦   ¦       +---Release
+¦   ¦       +---RelWithDebInfo
+¦   +---VulkanSceneGraph
+¦   ¦   +---.github
+¦   ¦   ¦   +---ISSUE_TEMPLATE
+¦   ¦   ¦   +---workflows
+¦   ¦   +---ALL_BUILD.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---bin
+¦   ¦   +---build_all_h.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---build_ShaderSets.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---build_simple_ShaderSets.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---clobber.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---cmake
+¦   ¦   +---CMakeFiles
+¦   ¦   +---cppcheck-vsg.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---cppcheck.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---docs
+¦   ¦   ¦   +---images
+¦   ¦   +---docs-vsg.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---docs.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---include
+¦   ¦   ¦   +---vsg
+¦   ¦   ¦       +---animation
+¦   ¦   ¦       +---app
+¦   ¦   ¦       +---commands
+¦   ¦   ¦       +---core
+¦   ¦   ¦       +---io
+¦   ¦   ¦       +---lighting
+¦   ¦   ¦       +---maths
+¦   ¦   ¦       +---meshshaders
+¦   ¦   ¦       +---nodes
+¦   ¦   ¦       +---platform
+¦   ¦   ¦       ¦   +---android
+¦   ¦   ¦       ¦   +---ios
+¦   ¦   ¦       ¦   +---macos
+¦   ¦   ¦       ¦   +---win32
+¦   ¦   ¦       ¦   +---xcb
+¦   ¦   ¦       +---raytracing
+¦   ¦   ¦       +---state
+¦   ¦   ¦       +---text
+¦   ¦   ¦       +---threading
+¦   ¦   ¦       +---ui
+¦   ¦   ¦       +---utils
+¦   ¦   ¦       +---vk
+¦   ¦   +---INSTALL.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---lib
+¦   ¦   +---src
+¦   ¦   ¦   +---vsg
+¦   ¦   ¦       +---animation
+¦   ¦   ¦       +---app
+¦   ¦   ¦       +---CMakeFiles
+¦   ¦   ¦       ¦   +---Export
+¦   ¦   ¦       ¦       +---b77ef11fcce59270e28da79498b5d832
+¦   ¦   ¦       +---commands
+¦   ¦   ¦       +---core
+¦   ¦   ¦       +---INSTALL.dir
+¦   ¦   ¦       ¦   +---Debug
+¦   ¦   ¦       ¦   +---MinSizeRel
+¦   ¦   ¦       ¦   +---Release
+¦   ¦   ¦       ¦   +---RelWithDebInfo
+¦   ¦   ¦       +---io
+¦   ¦   ¦       +---lighting
+¦   ¦   ¦       +---maths
+¦   ¦   ¦       +---meshshaders
+¦   ¦   ¦       +---nodes
+¦   ¦   ¦       +---platform
+¦   ¦   ¦       ¦   +---android
+¦   ¦   ¦       ¦   +---ios
+¦   ¦   ¦       ¦   +---macos
+¦   ¦   ¦       ¦   +---win32
+¦   ¦   ¦       ¦   +---xcb
+¦   ¦   ¦       +---raytracing
+¦   ¦   ¦       +---state
+¦   ¦   ¦       +---text
+¦   ¦   ¦       ¦   +---shaders
+¦   ¦   ¦       +---threading
+¦   ¦   ¦       +---ui
+¦   ¦   ¦       +---utils
+¦   ¦   ¦       ¦   +---shaders
+¦   ¦   ¦       +---vk
+¦   ¦   ¦       +---vsg.dir
+¦   ¦   ¦           +---Debug
+¦   ¦   ¦           +---MinSizeRel
+¦   ¦   ¦           +---Release
+¦   ¦   ¦           +---RelWithDebInfo
+¦   ¦   +---uninstall-vsg.dir
+¦   ¦   ¦   +---Debug
+¦   ¦   ¦   +---MinSizeRel
+¦   ¦   ¦   +---Release
+¦   ¦   ¦   +---RelWithDebInfo
+¦   ¦   +---uninstall.dir
+¦   ¦       +---Debug
+¦   ¦       +---MinSizeRel
+¦   ¦       +---Release
+¦   ¦       +---RelWithDebInfo
+¦   +---VulkanSDK
+¦   ¦   +---1.4.335.0
+¦   ¦       +---Bin
+¦   ¦       ¦   +---slang-standard-module-2025.23.2
+¦   ¦       +---Bin-ARM64
+¦   ¦       +---cmake
+¦   ¦       +---Config
+¦   ¦       ¦   +---VK_LAYER_KHRONOS_profiles
+¦   ¦       +---Helpers
+¦   ¦       +---Include
+¦   ¦       ¦   +---dxc
+¦   ¦       ¦   +---glm
+¦   ¦       ¦   ¦   +---detail
+¦   ¦       ¦   ¦   +---ext
+¦   ¦       ¦   ¦   +---gtc
+¦   ¦       ¦   ¦   +---gtx
+¦   ¦       ¦   ¦   +---simd
+¦   ¦       ¦   +---glslang
+¦   ¦       ¦   ¦   +---Include
+¦   ¦       ¦   ¦   +---MachineIndependent
+¦   ¦       ¦   ¦   +---Public
+¦   ¦       ¦   ¦   +---SPIRV
+¦   ¦       ¦   +---SDL2
+¦   ¦       ¦   +---SDL3
+¦   ¦       ¦   +---shaderc
+¦   ¦       ¦   +---slang
+¦   ¦       ¦   +---spirv-headers
+¦   ¦       ¦   +---spirv-tools
+¦   ¦       ¦   +---spirv_cross
+¦   ¦       ¦   +---vk_video
+¦   ¦       ¦   +---vma
+¦   ¦       ¦   +---Volk
+¦   ¦       ¦   +---vulkan
+¦   ¦       ¦       +---utility
+¦   ¦       +---installerResources
+¦   ¦       ¦   +---com.lunarg.vulkan.arm64
+¦   ¦       ¦   +---com.lunarg.vulkan.core
+¦   ¦       ¦   +---com.lunarg.vulkan.debug
+¦   ¦       ¦   +---com.lunarg.vulkan.glm
+¦   ¦       ¦   +---com.lunarg.vulkan.sdl2
+¦   ¦       ¦   +---com.lunarg.vulkan.vma
+¦   ¦       ¦   +---com.lunarg.vulkan.volk
+¦   ¦       +---Lib
+¦   ¦       ¦   +---cmake
+¦   ¦       ¦       +---glslang
+¦   ¦       ¦       ¦   +---glslang
+¦   ¦       ¦       +---SPIRV-Headers
+¦   ¦       ¦       +---SPIRV-Tools
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---SPIRV-Tools-diff
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---SPIRV-Tools-link
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---SPIRV-Tools-lint
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---SPIRV-Tools-opt
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---SPIRV-Tools-reduce
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---SPIRV-Tools-tools
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_c
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_core
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_cpp
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_c_shared
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_glsl
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_hlsl
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_msl
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_reflect
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_util
+¦   ¦       ¦           +---cmake
+¦   ¦       +---Lib-ARM64
+¦   ¦       ¦   +---cmake
+¦   ¦       ¦       +---glslang
+¦   ¦       ¦       +---SPIRV-Headers
+¦   ¦       ¦       +---SPIRV-Tools
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---SPIRV-Tools-diff
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---SPIRV-Tools-link
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---SPIRV-Tools-lint
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---SPIRV-Tools-opt
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---SPIRV-Tools-reduce
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---SPIRV-Tools-tools
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_c
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_core
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_cpp
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_c_shared
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_glsl
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_hlsl
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_msl
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_reflect
+¦   ¦       ¦       ¦   +---cmake
+¦   ¦       ¦       +---spirv_cross_util
+¦   ¦       ¦           +---cmake
+¦   ¦       +---Licenses
+¦   ¦       +---share
+¦   ¦       ¦   +---vulkan
+¦   ¦       ¦       +---registry
+¦   ¦       +---Source
+¦   ¦       ¦   +---SPIRV-Reflect
+¦   ¦       ¦       +---include
+¦   ¦       ¦           +---spirv
+¦   ¦       ¦               +---unified1
+¦   ¦       +---Templates
+¦   ¦           +---Visual Studio 2022
+¦   +---zlib
+¦   ¦   +---.github
+¦   ¦   ¦   +---workflows
+¦   ¦   +---amiga
+¦   ¦   +---contrib
+¦   ¦   ¦   +---ada
+¦   ¦   ¦   +---blast
+¦   ¦   ¦   +---delphi
+¦   ¦   ¦   +---dotzlib
+¦   ¦   ¦   ¦   +---DotZLib
+¦   ¦   ¦   +---gcc_gvmat64
+¦   ¦   ¦   +---infback9
+¦   ¦   ¦   +---iostream
+¦   ¦   ¦   +---iostream2
+¦   ¦   ¦   +---iostream3
+¦   ¦   ¦   +---minizip
+¦   ¦   ¦   +---nuget
+¦   ¦   ¦   +---pascal
+¦   ¦   ¦   +---puff
+¦   ¦   ¦   +---testzlib
+¦   ¦   ¦   +---untgz
+¦   ¦   ¦   +---vstudio
+¦   ¦   ¦       +---vc10
+¦   ¦   ¦       +---vc11
+¦   ¦   ¦       +---vc12
+¦   ¦   ¦       +---vc14
+¦   ¦   ¦       +---vc17
+¦   ¦   ¦       +---vc9
+¦   ¦   +---doc
+¦   ¦   +---examples
+¦   ¦   +---msdos
+¦   ¦   +---nintendods
+¦   ¦   +---old
+¦   ¦   ¦   +---os2
+¦   ¦   +---os400
+¦   ¦   +---qnx
+¦   ¦   +---test
+¦   ¦   +---watcom
+¦   ¦   +---win32
+¦   +---zstd
+¦       +---.github
+¦       ¦   +---ISSUE_TEMPLATE
+¦       ¦   +---workflows
+¦       +---build
+¦       ¦   +---cmake
+¦       ¦   ¦   +---CMakeModules
+¦       ¦   ¦   +---contrib
+¦       ¦   ¦   ¦   +---gen_html
+¦       ¦   ¦   ¦   +---pzstd
+¦       ¦   ¦   +---lib
+¦       ¦   ¦   +---programs
+¦       ¦   ¦   +---tests
+¦       ¦   +---meson
+¦       ¦   ¦   +---contrib
+¦       ¦   ¦   ¦   +---gen_html
+¦       ¦   ¦   ¦   +---pzstd
+¦       ¦   ¦   +---lib
+¦       ¦   ¦   +---programs
+¦       ¦   ¦   +---tests
+¦       ¦   +---single_file_libs
+¦       ¦   ¦   +---examples
+¦       ¦   +---VS2008
+¦       ¦   ¦   +---fullbench
+¦       ¦   ¦   +---fuzzer
+¦       ¦   ¦   +---zstd
+¦       ¦   ¦   +---zstdlib
+¦       ¦   +---VS2010
+¦       ¦   ¦   +---datagen
+¦       ¦   ¦   +---fullbench
+¦       ¦   ¦   +---fuzzer
+¦       ¦   ¦   +---libzstd
+¦       ¦   ¦   +---libzstd-dll
+¦       ¦   ¦   +---zstd
+¦       ¦   +---VS_scripts
+¦       +---contrib
+¦       ¦   +---diagnose_corruption
+¦       ¦   +---docker
+¦       ¦   +---externalSequenceProducer
+¦       ¦   +---freestanding_lib
+¦       ¦   +---gen_html
+¦       ¦   +---largeNbDicts
+¦       ¦   +---linux-kernel
+¦       ¦   ¦   +---test
+¦       ¦   ¦       +---include
+¦       ¦   ¦           +---linux
+¦       ¦   +---match_finders
+¦       ¦   +---premake
+¦       ¦   +---pzstd
+¦       ¦   ¦   +---images
+¦       ¦   ¦   +---test
+¦       ¦   ¦   +---utils
+¦       ¦   ¦       +---test
+¦       ¦   +---recovery
+¦       ¦   +---seekable_format
+¦       ¦   ¦   +---examples
+¦       ¦   ¦   +---tests
+¦       ¦   +---seqBench
+¦       ¦   +---snap
+¦       ¦   +---VS2005
+¦       ¦       +---fullbench
+¦       ¦       +---fuzzer
+¦       ¦       +---zstd
+¦       ¦       +---zstdlib
+¦       +---doc
+¦       ¦   +---educational_decoder
+¦       ¦   +---images
+¦       +---examples
+¦       +---lib
+¦       ¦   +---common
+¦       ¦   +---compress
+¦       ¦   +---decompress
+¦       ¦   +---deprecated
+¦       ¦   +---dictBuilder
+¦       ¦   +---dll
+¦       ¦   ¦   +---example
+¦       ¦   +---legacy
+¦       +---programs
+¦       ¦   +---windres
+¦       +---tests
+¦       ¦   +---cli-tests
+¦       ¦   ¦   +---basic
+¦       ¦   ¦   +---bin
+¦       ¦   ¦   +---cltools
+¦       ¦   ¦   +---common
+¦       ¦   ¦   +---compression
+¦       ¦   ¦   +---decompression
+¦       ¦   ¦   +---dict-builder
+¦       ¦   ¦   +---dictionaries
+¦       ¦   ¦   +---file-handling
+¦       ¦   ¦   +---file-stat
+¦       ¦   ¦   +---progress
+¦       ¦   ¦   +---zstd-symlinks
+¦       ¦   +---dict-files
+¦       ¦   +---fuzz
+¦       ¦   ¦   +---seq_prod_fuzz_example
+¦       ¦   +---golden-compression
+¦       ¦   +---golden-decompression
+¦       ¦   +---golden-decompression-errors
+¦       ¦   +---golden-dictionaries
+¦       ¦   +---gzip
+¦       ¦   +---regression
+¦       +---zlibWrapper
+¦           +---examples
++---luavsg_clobber.dir
+¦   +---Debug
+¦   +---MinSizeRel
+¦   +---Release
+¦   +---RelWithDebInfo
++---models
++---myfirstvsgapplication.dir
+¦   +---Debug
+¦   +---MinSizeRel
+¦   +---Release
+¦   +---RelWithDebInfo
++---src
++---ZERO_CHECK.dir
+¦   +---Debug
+¦   +---MinSizeRel
+¦   +---Release
+¦   +---RelWithDebInfo
++---_deps
+    +---draco
+    ¦   +---CMakeFiles
+    +---freetype
+        +---CMakeFiles
