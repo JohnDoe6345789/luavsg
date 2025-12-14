@@ -1,28 +1,27 @@
 #!/usr/bin/env python3
-"""luavsg_diag.py
+"""
+luavsg_diag.py (v2)
 
-Brute-force, tree-walking CMake dependency diagnostic for a vendored luavsg tree.
+What it detects:
+- Any *Config.cmake / *-config.cmake under <repo>/lib (always).
+- Vulkan SDK (env or vendored) + vulkan.h + vulkan-1.lib (Windows).
+- A small set of "known header markers" (glslang/draco/freetype/KTX/curl).
 
-Goals:
-- Prefer facts from the filesystem over assumptions.
-- Quickly answer: "Do I have headers? Do I have built artifacts? Do I have
-  *Config.cmake? If yes, what -D<PKG>_DIR should I pass?"
+How "does it detect all these lib folders?":
+- The script can auto-populate a "wanted packages" list from the directory names
+  under <repo>/lib via --auto-want. It then reports which of those have a
+  Config.cmake and suggests -D<Pkg>_DIR where possible.
 
 Usage:
-  python luavsg_diag.py
   python luavsg_diag.py --repo .
-  python luavsg_diag.py --repo . --json
-
-Output is intentionally concise:
-- Vulkan status
-- Missing headers (by name)
-- Missing Config.cmake (by name)
-- Suggested -D flags (by name)
+  python luavsg_diag.py --repo . --auto-want
+  python luavsg_diag.py --repo . --auto-want --json
+  python luavsg_diag.py --repo . --want ZLIB PNG nghttp2
 
 Notes:
-- Some deps are vendored as source only (no Config.cmake) until you build them.
-- Some projects ship a config (e.g. KTX has cmake/KtxConfig.cmake) but the
-  headers may live in non-obvious include layouts; this script searches.
+- Many libraries vendored as source won't have a Config.cmake until built or
+  installed. That is normal (e.g., curl deps: brotli, zlib, zstd, nghttp2, etc.).
+- Out-of-source build is recommended (freetype forbids top-level in-source).
 """
 
 from __future__ import annotations
@@ -30,286 +29,294 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import platform
+import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, Iterator
+from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
 
 @dataclass(frozen=True)
-class Probe:
+class Hit:
+    pkg: str
+    path: Path
+
+
+@dataclass(frozen=True)
+class Check:
     name: str
-    header_markers: tuple[str, ...]
-    config_markers: tuple[str, ...]
+    ok: bool
+    detail: str
 
 
-def _is_win() -> bool:
-    return os.name == "nt"
+def _norm(p: Path) -> str:
+    return str(p.resolve()).replace("\\", "/")
 
 
-def _dedupe(paths: Iterable[Path]) -> list[Path]:
-    seen: set[Path] = set()
-    out: list[Path] = []
-    for p in paths:
-        r = p.resolve()
-        if r not in seen:
-            seen.add(r)
-            out.append(r)
-    return out
+def _is_windows() -> bool:
+    return platform.system().lower().startswith("win")
 
 
-def _walk_files(root: Path) -> Iterator[Path]:
-    # A fast, brute-force walk. Avoids following symlinks.
-    for p in root.rglob("*"):
-        if p.is_file():
-            yield p
+def _tmp_base() -> Path:
+    if _is_windows():
+        return Path(os.environ.get("TEMP") or os.environ.get("TMP") or "C:/Temp")
+    return Path(os.environ.get("TMPDIR") or "/tmp")
 
 
-def _vendored_latest(dirpath: Path) -> Path | None:
-    if not dirpath.exists():
+def _infer_pkg_from_config_name(name: str) -> str:
+    n = name
+    if n.lower().endswith("-config.cmake"):
+        n = n[: -len("-config.cmake")]
+    elif n.lower().endswith("config.cmake"):
+        n = n[: -len("Config.cmake")]
+        n = n[: -len("config.cmake")] if n.lower().endswith("config.cmake") else n
+    return n
+
+
+def _walk_configs(root: Path) -> List[Hit]:
+    patterns = ("*Config.cmake", "*-config.cmake")
+    hits: List[Hit] = []
+    if not root.exists():
+        return hits
+
+    for pat in patterns:
+        for p in root.rglob(pat):
+            parts = {x.lower() for x in p.parts}
+            if ".git" in parts or "cmakefiles" in parts:
+                continue
+            hits.append(Hit(pkg=_infer_pkg_from_config_name(p.name), path=p))
+    return hits
+
+
+def _best_config_dir(hits: Sequence[Hit], wanted: str) -> Optional[Path]:
+    wanted_l = wanted.lower()
+    candidates = [h.path.parent for h in hits if h.pkg.lower() == wanted_l]
+    if not candidates:
+        candidates = [
+            h.path.parent
+            for h in hits
+            if wanted_l in h.pkg.lower() or wanted_l in h.path.name.lower()
+        ]
+    if not candidates:
         return None
-    kids = sorted([p for p in dirpath.iterdir() if p.is_dir()])
-    return kids[-1] if kids else None
+
+    def score(p: Path) -> Tuple[int, int, int]:
+        s = _norm(p).lower()
+        good = int("/lib/" in s or "/lib64/" in s) + int("/cmake/" in s)
+        bad = int("arm64" in s)  # prefer non-arm64
+        return (good, -bad, -len(p.parts))
+
+    return sorted(candidates, key=score, reverse=True)[0]
 
 
-def _vulkan_sdk(repo: Path) -> Path | None:
-    env = os.environ.get("VULKAN_SDK", "").strip()
+def _vulkan_sdk(repo: Path) -> Optional[Path]:
+    env = os.environ.get("VULKAN_SDK")
     if env:
         p = Path(env)
-        return p if p.exists() else None
-    return _vendored_latest(repo / "lib" / "VulkanSDK")
-
-
-def _vk_libs(sdk: Path) -> list[Path]:
-    if not _is_win():
-        return []
-    return [
-        sdk / "Lib" / "vulkan-1.lib",
-        sdk / "Lib" / "x64" / "vulkan-1.lib",
-        sdk / "Lib-ARM64" / "vulkan-1.lib",
-        sdk / "Lib-ARM64" / "arm64" / "vulkan-1.lib",
-    ]
-
-
-def _first_existing(paths: Iterable[Path]) -> Path | None:
-    for p in paths:
         if p.exists():
             return p
-    return None
+
+    root = repo / "lib" / "VulkanSDK"
+    if not root.exists():
+        return None
+    versions = [p for p in root.iterdir() if p.is_dir()]
+    if not versions:
+        return None
+    versions.sort()
+    return versions[-1]
 
 
-def _probes() -> list[Probe]:
-    # Markers are *filenames* we look for anywhere under repo/lib.
-    # Use multiple markers because different projects use different layouts.
+def _vulkan_checks(vsdk: Path) -> List[Check]:
+    inc = vsdk / "Include" / "vulkan" / "vulkan.h"
+    lib = vsdk / "Lib" / "vulkan-1.lib"
+    if not lib.exists():
+        lib = vsdk / "Lib-ARM64" / "vulkan-1.lib"
     return [
-        Probe(
-            name="glslang",
-            header_markers=("ShaderLang.h",),
-            config_markers=(
-                "glslangConfig.cmake",
-                "glslang-config.cmake",
-            ),
+        Check("VULKAN_SDK", True, _norm(vsdk)),
+        Check("vulkan.h", inc.exists(), _norm(inc)),
+        Check("vulkan-1.lib", lib.exists(), _norm(lib)),
+    ]
+
+
+def _collect_header_checks(repo: Path) -> List[Check]:
+    lib = repo / "lib"
+    return [
+        Check(
+            "glslang header (ShaderLang.h)",
+            (lib / "glslang" / "glslang" / "Public" / "ShaderLang.h").exists(),
+            _norm(lib / "glslang" / "glslang" / "Public" / "ShaderLang.h"),
         ),
-        Probe(
-            name="draco",
-            header_markers=("encode.h", "draco_features.h"),
-            config_markers=("dracoConfig.cmake", "draco-config.cmake"),
+        Check(
+            "draco header (encode.h)",
+            (lib / "draco" / "src" / "draco" / "compression" / "encode.h").exists(),
+            _norm(lib / "draco" / "src" / "draco" / "compression" / "encode.h"),
         ),
-        Probe(
-            name="Ktx",
-            header_markers=("ktx.h",),
-            config_markers=(
-                "KtxConfig.cmake",
-                "ktxConfig.cmake",
-                "KTXConfig.cmake",
-                "ktx-config.cmake",
-            ),
+        Check(
+            "freetype header (freetype.h)",
+            (lib / "freetype" / "include" / "freetype" / "freetype.h").exists(),
+            _norm(lib / "freetype" / "include" / "freetype" / "freetype.h"),
         ),
-        Probe(
-            name="CURL",
-            header_markers=("curl.h",),
-            config_markers=(
-                "CURLConfig.cmake",
-                "curlConfig.cmake",
-                "curl-config.cmake",
-            ),
+        Check(
+            "KTX header (ktx.h)",
+            (lib / "KTX" / "include" / "KHR" / "ktx.h").exists(),
+            _norm(lib / "KTX" / "include" / "KHR" / "ktx.h"),
         ),
-        Probe(
-            name="Freetype",
-            header_markers=("freetype.h",),
-            config_markers=(
-                "FreetypeConfig.cmake",
-                "freetypeConfig.cmake",
-                "freetype-config.cmake",
-            ),
+        Check(
+            "curl header (curl.h)",
+            (lib / "curl" / "include" / "curl" / "curl.h").exists(),
+            _norm(lib / "curl" / "include" / "curl" / "curl.h"),
         ),
     ]
 
 
-def _index_tree(repo: Path) -> tuple[dict[str, list[Path]], dict[str, list[Path]]]:
-    # Returns (headers_by_basename, configs_by_basename)
-    lib_root = repo / "lib"
-    headers: dict[str, list[Path]] = {}
-    configs: dict[str, list[Path]] = {}
-
-    if not lib_root.exists():
-        return headers, configs
-
-    for f in _walk_files(lib_root):
-        name = f.name
-        low = name.lower()
-
-        # Header-ish: .h / .hpp
-        if low.endswith((".h", ".hpp")):
-            headers.setdefault(name, []).append(f)
-
-        # CMake configs: *Config.cmake or *-config.cmake
-        if low.endswith("config.cmake") or low.endswith("-config.cmake"):
-            configs.setdefault(name, []).append(f)
-
-    # Deterministic ordering
-    for d in (headers, configs):
-        for k in list(d.keys()):
-            d[k] = sorted(_dedupe(d[k]))
-
-    return headers, configs
+def _in_source_build_artifacts(repo: Path) -> bool:
+    return (repo / "CMakeCache.txt").exists() or (repo / "CMakeFiles").exists()
 
 
-def _pick_best_config(paths: list[Path]) -> Path | None:
-    if not paths:
-        return None
-
-    # Prefer x64-ish locations; avoid ARM64 unless that's all we have.
-    def score(p: Path) -> tuple[int, int]:
-        s = p.as_posix().lower()
-        bad = 1 if "arm64" in s else 0
-        good = 1 if ("/lib/" in s or "/cmake/" in s) else 0
-        # Lower bad is better; higher good is better.
-        return (bad, -good)
-
-    return sorted(paths, key=score)[0]
+def _suggest_out_of_source(repo: Path) -> str:
+    b = _tmp_base() / "luavsg_build"
+    return f'cmake -S "{_norm(repo)}" -B "{_norm(b)}"'
 
 
-def _flag(pkg: str, config_file: Path) -> str:
-    return f"-D{pkg}_DIR=\"{config_file.parent.as_posix()}\""
+def _lib_dirs(repo: Path) -> List[str]:
+    root = repo / "lib"
+    if not root.exists():
+        return []
+    return sorted([p.name for p in root.iterdir() if p.is_dir()], key=str.lower)
 
 
-def diagnose(repo: Path) -> dict[str, object]:
-    sdk = _vulkan_sdk(repo)
-    vk_h = sdk / "Include" / "vulkan" / "vulkan.h" if sdk else None
-    vk_lib = _first_existing(_vk_libs(sdk)) if sdk else None
-
-    hdr_index, cfg_index = _index_tree(repo)
-
-    header_hits: dict[str, list[str]] = {}
-    config_hits: dict[str, list[str]] = {}
-    suggested_flags: dict[str, str] = {}
-    missing_headers: dict[str, str] = {}
-    missing_configs: list[str] = []
-
-    for pr in _probes():
-        # Header: consider "present" if any marker basename exists anywhere.
-        pr_hdr_paths: list[Path] = []
-        for m in pr.header_markers:
-            pr_hdr_paths.extend(hdr_index.get(m, []))
-        pr_hdr_paths = _dedupe(pr_hdr_paths)
-        header_hits[pr.name] = [p.as_posix() for p in pr_hdr_paths]
-        if not pr_hdr_paths:
-            missing_headers[pr.name] = ", ".join(pr.header_markers)
-
-        # Config: pick best config file among marker basenames.
-        pr_cfg_paths: list[Path] = []
-        for m in pr.config_markers:
-            pr_cfg_paths.extend(cfg_index.get(m, []))
-        pr_cfg_paths = _dedupe(pr_cfg_paths)
-        config_hits[pr.name] = [p.as_posix() for p in pr_cfg_paths]
-
-        best = _pick_best_config(pr_cfg_paths)
-        if best is None:
-            missing_configs.append(pr.name)
-        else:
-            suggested_flags[pr.name] = _flag(pr.name, best)
-
-    return {
-        "repo": repo.as_posix(),
-        "platform": "windows" if _is_win() else os.name,
-        "vulkan_sdk": sdk.as_posix() if sdk else None,
-        "vulkan_h": vk_h.as_posix() if vk_h and vk_h.exists() else None,
-        "vulkan_1_lib": vk_lib.as_posix() if vk_lib else None,
-        "header_hits": header_hits,
-        "config_hits": config_hits,
-        "missing_headers": missing_headers,
-        "missing_configs": sorted(missing_configs),
-        "suggested_flags": {k: suggested_flags[k] for k in sorted(suggested_flags)},
+def _auto_want_from_lib_dirs(lib_dirs: Sequence[str]) -> List[str]:
+    # Directory name != CMake package name sometimes.
+    mapping = {
+        "zlib": "ZLIB",
+        "libpng": "PNG",
+        "ktx": "Ktx",
+        "vulkansdk": "Vulkan",
     }
+    out: List[str] = []
+    for d in lib_dirs:
+        key = d.lower()
+        out.append(mapping.get(key, d))
+    # Remove obvious non-deps / meta folders.
+    drop = {"lua", "vulkanscenegraph", "vsgxchange"}
+    out = [x for x in out if x.lower() not in drop]
+    # De-dupe preserving order.
+    seen: set[str] = set()
+    final: List[str] = []
+    for x in out:
+        xl = x.lower()
+        if xl not in seen:
+            seen.add(xl)
+            final.append(x)
+    return final
 
 
-def _print(report: dict[str, object]) -> None:
-    print(f"repo: {report['repo']}")
-    print(f"platform: {report['platform']}")
-    print(f"VULKAN_SDK: {report['vulkan_sdk'] or 'MISSING'}")
-    print(f"vulkan.h: {report['vulkan_h'] or 'MISSING'}")
-    print(f"vulkan-1.lib: {report['vulkan_1_lib'] or 'MISSING'}")
+def _summarize(
+    repo: Path,
+    vsdk: Optional[Path],
+    hits: Sequence[Hit],
+    want: Sequence[str],
+) -> Dict[str, object]:
+    data: Dict[str, object] = {}
+    data["repo"] = _norm(repo)
+    data["platform"] = platform.system().lower()
+    data["python"] = sys.version.split()[0]
+    data["in_source_build_artifacts"] = _in_source_build_artifacts(repo)
+    data["suggested_out_of_source"] = _suggest_out_of_source(repo)
+    data["lib_dirs"] = _lib_dirs(repo)
 
-    miss_h: dict[str, str] = report["missing_headers"]
-    miss_c: list[str] = report["missing_configs"]
+    if vsdk:
+        data["vulkan"] = {c.name: {"ok": c.ok, "detail": c.detail} for c in _vulkan_checks(vsdk)}
+    else:
+        data["vulkan"] = {"VULKAN_SDK": {"ok": False, "detail": "missing"}}
 
-    if miss_h:
-        print("\nmissing headers (no basename match found under repo/lib):")
-        for k in sorted(miss_h):
-            print(f"  - {k}: {miss_h[k]}")
+    headers = _collect_header_checks(repo)
+    data["headers"] = {c.name: {"ok": c.ok, "detail": c.detail} for c in headers}
 
-    if miss_c:
+    found: Dict[str, List[str]] = {}
+    for h in hits:
+        found.setdefault(h.pkg, []).append(_norm(h.path))
+    data["configs_found"] = found
+
+    missing: List[str] = []
+    flags: List[str] = []
+    for pkg in want:
+        cfg = _best_config_dir(hits, pkg)
+        if cfg is None:
+            missing.append(pkg)
+        else:
+            flags.append(f'-D{pkg}_DIR="{_norm(cfg)}"')
+    data["want"] = list(want)
+    data["missing_configs"] = sorted(set(missing), key=str.lower)
+    data["suggested_flags"] = flags
+    return data
+
+
+def _print_human(data: Dict[str, object]) -> None:
+    print(f"repo: {data['repo']}")
+    print(f"platform: {data['platform']}")
+    print(f"python: {data['python']}")
+    if data.get("in_source_build_artifacts"):
+        print("note: in-source build artifacts detected in repo root")
+        print(f"recommended: {data['suggested_out_of_source']}")
+
+    vulkan = data.get("vulkan", {})
+    vsdk = vulkan.get("VULKAN_SDK", {}) if isinstance(vulkan, dict) else {}
+    if isinstance(vsdk, dict) and vsdk.get("ok"):
+        print(f"VULKAN_SDK: {vsdk.get('detail')}")
+        for k in ("vulkan.h", "vulkan-1.lib"):
+            d = vulkan.get(k, {})
+            ok = "OK" if d.get("ok") else "MISSING"
+            print(f"{k}: {ok} -> {d.get('detail')}")
+    else:
+        print("VULKAN_SDK: missing")
+
+    lib_dirs = data.get("lib_dirs", [])
+    if lib_dirs:
+        print("\nlib folders:")
+        print("  " + ", ".join(lib_dirs))
+
+    miss_cfg = data.get("missing_configs", [])
+    if miss_cfg:
         print("\nmissing Config.cmake (no config file found under repo/lib):")
-        for k in miss_c:
-            print(f"  - {k}")
+        for m in miss_cfg:
+            print(f"  - {m}")
 
-    flags: dict[str, str] = report["suggested_flags"]
+    flags = data.get("suggested_flags", [])
     if flags:
         print("\nsuggested -D flags:")
-        for k in sorted(flags):
-            print(f"  {flags[k]}")
+        for f in flags:
+            print(f"  {f}")
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(add_help=True)
-    ap.add_argument("--repo", default=".")
-    ap.add_argument("--json", action="store_true")
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--repo", required=True, help="Path to luavsg repo root")
+    ap.add_argument("--json", action="store_true", help="Emit JSON")
+    ap.add_argument("--auto-want", action="store_true", help="Treat <repo>/lib directory names as wanted packages")
     ap.add_argument(
-        "--show-hits",
-        action="store_true",
-        help="Also print the first few filesystem hits per package",
+        "--want",
+        nargs="*",
+        default=["glslang", "Ktx", "draco", "CURL", "Freetype"],
+        help="Package names to look for (<Pkg>Config.cmake)",
     )
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
 
-    repo = Path(args.repo).expanduser().resolve()
+    repo = Path(args.repo).resolve()
     if not repo.exists():
-        raise SystemExit(f"repo not found: {repo}")
+        print(f"error: repo not found: {repo}", file=sys.stderr)
+        return 2
 
-    report = diagnose(repo)
+    hits = _walk_configs(repo / "lib")
+    want = _auto_want_from_lib_dirs(_lib_dirs(repo)) if args.auto_want else list(args.want)
+
+    vsdk = _vulkan_sdk(repo)
+    data = _summarize(repo=repo, vsdk=vsdk, hits=hits, want=want)
 
     if args.json:
-        print(json.dumps(report, indent=2))
-        return 0
-
-    _print(report)
-
-    if args.show_hits:
-        print("\n(hits)")
-        hh: dict[str, list[str]] = report["header_hits"]
-        ch: dict[str, list[str]] = report["config_hits"]
-        for pkg in sorted(hh):
-            print(f"\n[{pkg}] headers:")
-            for p in hh[pkg][:5]:
-                print(f"  {p}")
-            if len(hh[pkg]) > 5:
-                print(f"  ... ({len(hh[pkg]) - 5} more)")
-
-            print(f"[{pkg}] configs:")
-            for p in ch[pkg][:5]:
-                print(f"  {p}")
-            if len(ch[pkg]) > 5:
-                print(f"  ... ({len(ch[pkg]) - 5} more)")
-
+        print(json.dumps(data, indent=2))
+    else:
+        _print_human(data)
     return 0
 
 
