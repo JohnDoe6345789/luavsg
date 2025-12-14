@@ -433,6 +433,12 @@ else()
   endif()
 endif()
 
+# libunistring: has CMake.
+if(EXISTS "${CMAKE_SOURCE_DIR}/lib/libunistring/CMakeLists.txt")
+  message(STATUS "luavsg: using vendored libunistring from lib/libunistring")
+  add_subdirectory(lib/libunistring)
+endif()
+
 # Draco: has CMake.
 if(EXISTS "${CMAKE_SOURCE_DIR}/lib/draco/CMakeLists.txt")
   message(STATUS "luavsg: using vendored draco from lib/draco")
