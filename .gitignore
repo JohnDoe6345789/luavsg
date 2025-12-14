@@ -69,3 +69,4 @@ DerivedData/
 build/
 local.properties
 
+.kilocode
