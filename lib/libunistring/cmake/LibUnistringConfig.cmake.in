@@ -1,0 +1,8 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/LibUnistringTargets.cmake")
+
+# Back-compat alias in case parent projects expect "unistring::unistring".
+if(NOT TARGET unistring::unistring AND TARGET LibUnistring::LibUnistring)
+  add_library(unistring::unistring ALIAS LibUnistring::LibUnistring)
+endif()
