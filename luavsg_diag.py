@@ -1,27 +1,37 @@
 #!/usr/bin/env python3
 """
-luavsg_diag.py (v2)
+luavsg_diag.py (v3)
 
-What it detects:
-- Any *Config.cmake / *-config.cmake under <repo>/lib (always).
-- Vulkan SDK (env or vendored) + vulkan.h + vulkan-1.lib (Windows).
-- A small set of "known header markers" (glslang/draco/freetype/KTX/curl).
+Purpose
+-------
+Brute-force repo intelligence for building a "master" CMakeLists.txt around
+vendored dependencies.
 
-How "does it detect all these lib folders?":
-- The script can auto-populate a "wanted packages" list from the directory names
-  under <repo>/lib via --auto-want. It then reports which of those have a
-  Config.cmake and suggests -D<Pkg>_DIR where possible.
+Adds on top of v2:
+- Per-lib "build entrypoints" discovery:
+  - CMakeLists.txt (including nested: builds/cmake, cmake/, etc.)
+  - Meson (meson.build), Autotools (configure.ac / configure), Makefile
+  - Bazel (WORKSPACE, BUILD/BUILD.bazel), GN (BUILD.gn), Premake, etc.
+  - pkg-config (*.pc, *.pc.in)
+- "Key source markers" discovery:
+  - common top-level headers: include/**, src/** (summary)
+  - heuristic: look for main.c / main.cpp and library "entry" files
+    (limited & non-invasive; does not parse the whole project)
+- Improved "suggestions":
+  - add_subdirectory candidate path (best CMakeLists location per lib)
+  - -D<Pkg>_DIR hints (as before)
 
-Usage:
+Usage
+-----
   python luavsg_diag.py --repo .
   python luavsg_diag.py --repo . --auto-want
   python luavsg_diag.py --repo . --auto-want --json
-  python luavsg_diag.py --repo . --want ZLIB PNG nghttp2
+  python luavsg_diag.py --repo . --auto-want --deep   (more scanning)
 
-Notes:
-- Many libraries vendored as source won't have a Config.cmake until built or
-  installed. That is normal (e.g., curl deps: brotli, zlib, zstd, nghttp2, etc.).
-- Out-of-source build is recommended (freetype forbids top-level in-source).
+Notes
+-----
+- This tool is read-only: it does not modify your tree.
+- For huge libs, --deep may take longer; default mode is conservative.
 """
 
 from __future__ import annotations
@@ -49,6 +59,20 @@ class Check:
     detail: str
 
 
+@dataclass(frozen=True)
+class LibReport:
+    name: str
+    root: Path
+    cmake_roots: List[str]
+    other_build_files: List[str]
+    pkg_config_files: List[str]
+    example_mains: List[str]
+    include_dirs: List[str]
+    src_dirs: List[str]
+    config_dir_suggestion: Optional[str]
+    add_subdirectory_suggestion: Optional[str]
+
+
 def _norm(p: Path) -> str:
     return str(p.resolve()).replace("\\", "/")
 
@@ -68,8 +92,8 @@ def _infer_pkg_from_config_name(name: str) -> str:
     if n.lower().endswith("-config.cmake"):
         n = n[: -len("-config.cmake")]
     elif n.lower().endswith("config.cmake"):
-        n = n[: -len("Config.cmake")]
-        n = n[: -len("config.cmake")] if n.lower().endswith("config.cmake") else n
+        # Preserve original casing before 'Config.cmake'
+        n = n[: -len("Config.cmake")] if n.endswith("Config.cmake") else n[: -len("config.cmake")]
     return n
 
 
@@ -78,7 +102,6 @@ def _walk_configs(root: Path) -> List[Hit]:
     hits: List[Hit] = []
     if not root.exists():
         return hits
-
     for pat in patterns:
         for p in root.rglob(pat):
             parts = {x.lower() for x in p.parts}
@@ -103,7 +126,7 @@ def _best_config_dir(hits: Sequence[Hit], wanted: str) -> Optional[Path]:
     def score(p: Path) -> Tuple[int, int, int]:
         s = _norm(p).lower()
         good = int("/lib/" in s or "/lib64/" in s) + int("/cmake/" in s)
-        bad = int("arm64" in s)  # prefer non-arm64
+        bad = int("arm64" in s)
         return (good, -bad, -len(p.parts))
 
     return sorted(candidates, key=score, reverse=True)[0]
@@ -115,7 +138,6 @@ def _vulkan_sdk(repo: Path) -> Optional[Path]:
         p = Path(env)
         if p.exists():
             return p
-
     root = repo / "lib" / "VulkanSDK"
     if not root.exists():
         return None
@@ -186,21 +208,18 @@ def _lib_dirs(repo: Path) -> List[str]:
 
 
 def _auto_want_from_lib_dirs(lib_dirs: Sequence[str]) -> List[str]:
-    # Directory name != CMake package name sometimes.
     mapping = {
         "zlib": "ZLIB",
         "libpng": "PNG",
         "ktx": "Ktx",
         "vulkansdk": "Vulkan",
     }
+    drop = {"lua", "vulkanscenegraph", "vsgxchange"}
     out: List[str] = []
     for d in lib_dirs:
-        key = d.lower()
-        out.append(mapping.get(key, d))
-    # Remove obvious non-deps / meta folders.
-    drop = {"lua", "vulkanscenegraph", "vsgxchange"}
-    out = [x for x in out if x.lower() not in drop]
-    # De-dupe preserving order.
+        if d.lower() in drop:
+            continue
+        out.append(mapping.get(d.lower(), d))
     seen: set[str] = set()
     final: List[str] = []
     for x in out:
@@ -211,12 +230,126 @@ def _auto_want_from_lib_dirs(lib_dirs: Sequence[str]) -> List[str]:
     return final
 
 
-def _summarize(
-    repo: Path,
-    vsdk: Optional[Path],
-    hits: Sequence[Hit],
-    want: Sequence[str],
-) -> Dict[str, object]:
+def _limited_rglob(root: Path, patterns: Sequence[str], max_hits: int) -> List[Path]:
+    hits: List[Path] = []
+    if not root.exists():
+        return hits
+    for pat in patterns:
+        for p in root.rglob(pat):
+            hits.append(p)
+            if len(hits) >= max_hits:
+                return hits
+    return hits
+
+
+def _find_build_entrypoints(lib_root: Path, deep: bool) -> Tuple[List[str], List[str], List[str]]:
+    # CMake roots: directories containing CMakeLists.txt
+    cmake_hits = _limited_rglob(lib_root, ["CMakeLists.txt"], 200 if deep else 40)
+    cmake_dirs = sorted({_norm(p.parent) for p in cmake_hits}, key=str.lower)
+
+    other = []
+    other_files = [
+        "meson.build",
+        "configure",
+        "configure.ac",
+        "Makefile",
+        "makefile",
+        "BUILD.bazel",
+        "BUILD",
+        "WORKSPACE",
+        "BUILD.gn",
+        "premake5.lua",
+        "CMakePresets.json",
+    ]
+    other_hits = _limited_rglob(lib_root, other_files, 200 if deep else 40)
+    other = sorted({_norm(p) for p in other_hits}, key=str.lower)
+
+    pc_hits = _limited_rglob(lib_root, ["*.pc", "*.pc.in"], 200 if deep else 40)
+    pcs = sorted({_norm(p) for p in pc_hits}, key=str.lower)
+
+    return cmake_dirs, other, pcs
+
+
+def _find_source_markers(lib_root: Path, deep: bool) -> Tuple[List[str], List[str], List[str], List[str]]:
+    # include/src directory presence (top 2 levels)
+    include_dirs: List[str] = []
+    src_dirs: List[str] = []
+    for d in ("include", "Include", "inc"):
+        p = lib_root / d
+        if p.exists() and p.is_dir():
+            include_dirs.append(_norm(p))
+    for d in ("src", "Source", "sources", "lib"):
+        p = lib_root / d
+        if p.exists() and p.is_dir():
+            src_dirs.append(_norm(p))
+
+    # example mains: keep small; do not traverse entire tree unless deep
+    mains = _limited_rglob(lib_root, ["main.c", "main.cpp", "main.cc"], 50 if deep else 10)
+    mains_n = sorted({_norm(p) for p in mains}, key=str.lower)
+
+    # heuristic entry files (limited)
+    entry_patterns = ["*init*.c", "*init*.cpp", "*entry*.c", "*entry*.cpp"]
+    entries = _limited_rglob(lib_root, entry_patterns, 30 if deep else 10)
+    entries_n = sorted({_norm(p) for p in entries}, key=str.lower)
+
+    return include_dirs, src_dirs, mains_n, entries_n
+
+
+def _choose_add_subdirectory(cmake_dirs: Sequence[str], lib_root: Path) -> Optional[str]:
+    # Prefer:
+    # - <lib>/builds/cmake (freetype)
+    # - <lib>/cmake
+    # - <lib> (if it has CMakeLists)
+    # - shortest path depth otherwise
+    lr = _norm(lib_root).lower()
+
+    def rel_score(d: str) -> Tuple[int, int]:
+        dl = d.lower()
+        good = 0
+        if dl.endswith("/builds/cmake"):
+            good += 50
+        if dl.endswith("/cmake"):
+            good += 25
+        if dl == lr:
+            good += 20
+        # Prefer shallower dirs for add_subdirectory
+        depth = dl.count("/")
+        return (good, -depth)
+
+    if not cmake_dirs:
+        return None
+    return sorted(list(cmake_dirs), key=rel_score, reverse=True)[0]
+
+
+def _summarize_lib(repo: Path, lib_name: str, deep: bool, config_hits: Sequence[Hit]) -> LibReport:
+    root = repo / "lib" / lib_name
+    cmake_dirs, other_build, pcs = _find_build_entrypoints(root, deep=deep)
+    include_dirs, src_dirs, mains, entries = _find_source_markers(root, deep=deep)
+
+    # Suggest -D<Pkg>_DIR from config hits (if any), else None
+    # Use directory name as wanted package by default.
+    cfg_dir = _best_config_dir(config_hits, lib_name)
+
+    add_subdir = _choose_add_subdirectory(cmake_dirs, root)
+
+    # For reporting example entrypoints, include a couple of entries too.
+    example_mains = (mains + entries)[:10]
+
+    return LibReport(
+        name=lib_name,
+        root=root,
+        cmake_roots=cmake_dirs[:30],
+        other_build_files=other_build[:30],
+        pkg_config_files=pcs[:30],
+        example_mains=example_mains,
+        include_dirs=include_dirs[:10],
+        src_dirs=src_dirs[:10],
+        config_dir_suggestion=_norm(cfg_dir) if cfg_dir else None,
+        add_subdirectory_suggestion=add_subdir,
+    )
+
+
+def _summarize(repo: Path, vsdk: Optional[Path], hits: Sequence[Hit], want: Sequence[str], deep: bool) -> Dict[str, object]:
     data: Dict[str, object] = {}
     data["repo"] = _norm(repo)
     data["platform"] = platform.system().lower()
@@ -249,6 +382,26 @@ def _summarize(
     data["want"] = list(want)
     data["missing_configs"] = sorted(set(missing), key=str.lower)
     data["suggested_flags"] = flags
+
+    # New: per-lib reports
+    reports: List[Dict[str, object]] = []
+    for lib_name in data["lib_dirs"]:
+        lr = _summarize_lib(repo, lib_name, deep=deep, config_hits=hits)
+        reports.append(
+            {
+                "name": lr.name,
+                "root": _norm(lr.root),
+                "add_subdirectory": lr.add_subdirectory_suggestion,
+                "config_dir": lr.config_dir_suggestion,
+                "cmake_roots": lr.cmake_roots,
+                "other_build_files": lr.other_build_files,
+                "pkg_config_files": lr.pkg_config_files,
+                "include_dirs": lr.include_dirs,
+                "src_dirs": lr.src_dirs,
+                "example_entry_files": lr.example_mains,
+            }
+        )
+    data["lib_reports"] = reports
     return data
 
 
@@ -288,12 +441,46 @@ def _print_human(data: Dict[str, object]) -> None:
         for f in flags:
             print(f"  {f}")
 
+    reports = data.get("lib_reports", [])
+    if isinstance(reports, list) and reports:
+        print("\nlib build entrypoints (summary):")
+        for r in reports:
+            name = r.get("name")
+            addsub = r.get("add_subdirectory")
+            cfgdir = r.get("config_dir")
+            cmake_roots = r.get("cmake_roots") or []
+            other = r.get("other_build_files") or []
+            pcs = r.get("pkg_config_files") or []
+            print(f"\n[{name}]")
+            if addsub:
+                print(f"  add_subdirectory: {addsub}")
+            if cfgdir:
+                print(f"  config_dir:      {cfgdir}")
+            if cmake_roots:
+                print(f"  cmake_roots:     {len(cmake_roots)} (showing up to 3)")
+                for x in cmake_roots[:3]:
+                    print(f"    - {x}")
+            if other:
+                print(f"  other_build:     {len(other)} (showing up to 3)")
+                for x in other[:3]:
+                    print(f"    - {x}")
+            if pcs:
+                print(f"  pkg-config:      {len(pcs)} (showing up to 3)")
+                for x in pcs[:3]:
+                    print(f"    - {x}")
+            entry = r.get("example_entry_files") or []
+            if entry:
+                print(f"  entry_files:     {len(entry)} (showing up to 2)")
+                for x in entry[:2]:
+                    print(f"    - {x}")
+
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", required=True, help="Path to luavsg repo root")
     ap.add_argument("--json", action="store_true", help="Emit JSON")
     ap.add_argument("--auto-want", action="store_true", help="Treat <repo>/lib directory names as wanted packages")
+    ap.add_argument("--deep", action="store_true", help="Deeper scan (more hits; slower)")
     ap.add_argument(
         "--want",
         nargs="*",
@@ -309,9 +496,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     hits = _walk_configs(repo / "lib")
     want = _auto_want_from_lib_dirs(_lib_dirs(repo)) if args.auto_want else list(args.want)
-
     vsdk = _vulkan_sdk(repo)
-    data = _summarize(repo=repo, vsdk=vsdk, hits=hits, want=want)
+
+    data = _summarize(repo=repo, vsdk=vsdk, hits=hits, want=want, deep=args.deep)
 
     if args.json:
         print(json.dumps(data, indent=2))
