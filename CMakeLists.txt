@@ -3,6 +3,12 @@ cmake_minimum_required(VERSION 3.24)
 # Enable modern find_package() behavior for <PackageName>_ROOT hints.
 cmake_policy(SET CMP0074 NEW)
 
+# Silence draco's legacy Python module lookup warning on newer CMake.
+# (FindPythonInterp/FindPythonLibs removal.)
+if(POLICY CMP0148)
+    cmake_policy(SET CMP0148 NEW)
+endif()
+
 project(MyFirstVsgApplication
     VERSION 0.0.0
     DESCRIPTION "Template of how to create a program using VulkanSceneGraph and CMake"
@@ -52,12 +58,32 @@ endfunction()
 # Helper: safe add_subdirectory for optional vendored deps
 # -----------------------------------------------------------------------------
 
+# If you insist on in-source builds (cmake .), some subprojects (notably
+# freetype) forbid *any* build directory that lives under their source tree.
+# Workaround: route vendored dependency build dirs to a sibling folder outside
+# the repo when doing in-source builds.
+set(_luavsg_deps_binary_base "${CMAKE_BINARY_DIR}")
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+    set(_luavsg_deps_binary_base "${CMAKE_SOURCE_DIR}/../luavsg_deps_build")
+    message(STATUS "luavsg: in-source build detected; deps will build under: ${_luavsg_deps_binary_base}")
+endif()
+
 function(_luavsg_add_subdir name relpath bindir)
     if(EXISTS "${CMAKE_SOURCE_DIR}/${relpath}/CMakeLists.txt")
         message(STATUS "luavsg: using vendored ${name} from ${relpath}")
+
+        # Allow absolute or relative bindir. Relative bindirs are rooted at
+        # _luavsg_deps_binary_base to satisfy subprojects that forbid builds
+        # under their own source tree.
+        if(IS_ABSOLUTE "${bindir}")
+            set(_luavsg_bdir "${bindir}")
+        else()
+            set(_luavsg_bdir "${_luavsg_deps_binary_base}/${bindir}")
+        endif()
+
         add_subdirectory(
             "${CMAKE_SOURCE_DIR}/${relpath}"
-            "${CMAKE_BINARY_DIR}/${bindir}"
+            "${_luavsg_bdir}"
         )
         set(${name}_VENDORED ON PARENT_SCOPE)
     else()
@@ -66,6 +92,10 @@ function(_luavsg_add_subdir name relpath bindir)
 endfunction()
 
 function(_luavsg_alias_if_target alias existing)
+    if(TARGET "${existing}" AND NOT TARGET "${alias}")
+        add_library("${alias}" ALIAS "${existing}")
+    endif()
+endfunction() alias existing)
     if(TARGET "${existing}" AND NOT TARGET "${alias}")
         add_library("${alias}" ALIAS "${existing}")
     endif()
@@ -148,12 +178,14 @@ if(LUAVSG_VENDORED_DEPS)
     _luavsg_alias_if_target(draco::draco draco_shared)
 
     # Freetype
-    # Freetype CMake build is under builds/cmake in many distributions.
+    # Freetype forbids build dirs located under its source tree. If you run
+    # in-source builds (cmake .), we route dependency build dirs outside the repo
+    # via _luavsg_deps_binary_base (see _luavsg_add_subdir()).
     if(EXISTS "${CMAKE_SOURCE_DIR}/lib/freetype/builds/cmake/CMakeLists.txt")
         message(STATUS "luavsg: using vendored freetype from lib/freetype/builds/cmake")
         add_subdirectory(
             "${CMAKE_SOURCE_DIR}/lib/freetype/builds/cmake"
-            "${CMAKE_BINARY_DIR}/_deps/freetype"
+            "${_luavsg_deps_binary_base}/_deps/freetype"
         )
         set(freetype_VENDORED ON)
     else()
