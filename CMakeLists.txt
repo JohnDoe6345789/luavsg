@@ -3,8 +3,7 @@ cmake_minimum_required(VERSION 3.24)
 # Enable modern find_package() behavior for <PackageName>_ROOT hints.
 cmake_policy(SET CMP0074 NEW)
 
-# Silence draco's legacy Python module lookup warning on newer CMake.
-# (FindPythonInterp/FindPythonLibs removal.)
+# Silence legacy Python module lookup warning on newer CMake (draco).
 if(POLICY CMP0148)
     cmake_policy(SET CMP0148 NEW)
 endif()
@@ -30,16 +29,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 # -----------------------------------------------------------------------------
 
 option(LUAVSG_ENABLE_VSGXCHANGE "Build vsgXchange subproject" ON)
+option(LUAVSG_VSGXCHANGE_MINIMAL "Disable most vsgXchange plugins" ON)
 
-# If ON, we aggressively turn off optional vsgXchange plugins that tend to drag
-# in large dependency trees.
-option(LUAVSG_VSGXCHANGE_MINIMAL
-    "Disable most vsgXchange plugins (easier first build)"
-    ON
-)
-
-# B.2 mode: force vendored deps to be built as subprojects.
-option(LUAVSG_VENDORED_DEPS "Build vendored deps (draco/curl/freetype/KTX)" ON)
+# B.2 mode: build vendored deps (draco/curl/freetype/KTX) as subprojects.
+option(LUAVSG_VENDORED_DEPS "Build vendored deps" ON)
 
 # For curl, keep dependencies minimal on Windows.
 option(LUAVSG_CURL_MINIMAL "Configure curl for minimal dependency surface" ON)
@@ -55,49 +48,47 @@ function(_luavsg_cache_default name type value)
 endfunction()
 
 # -----------------------------------------------------------------------------
-# Helper: safe add_subdirectory for optional vendored deps
+# Helper: vendored deps build dir routing
 # -----------------------------------------------------------------------------
+# Some deps (notably freetype) forbid build dirs inside their source tree.
+# If you insist on in-source builds (cmake .), route dependency build dirs to a
+# sibling folder outside the repo.
 
-# If you insist on in-source builds (cmake .), some subprojects (notably
-# freetype) forbid *any* build directory that lives under their source tree.
-# Workaround: route vendored dependency build dirs to a sibling folder outside
-# the repo when doing in-source builds.
 set(_luavsg_deps_binary_base "${CMAKE_BINARY_DIR}")
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     set(_luavsg_deps_binary_base "${CMAKE_SOURCE_DIR}/../luavsg_deps_build")
-    message(STATUS "luavsg: in-source build detected; deps will build under: ${_luavsg_deps_binary_base}")
+    message(STATUS "luavsg: in-source build detected; deps build under: ${_luavsg_deps_binary_base}")
 endif()
 
+file(MAKE_DIRECTORY "${_luavsg_deps_binary_base}")
+
 function(_luavsg_add_subdir name relpath bindir)
-    if(EXISTS "${CMAKE_SOURCE_DIR}/${relpath}/CMakeLists.txt")
-        message(STATUS "luavsg: using vendored ${name} from ${relpath}")
-
-        # Allow absolute or relative bindir. Relative bindirs are rooted at
-        # _luavsg_deps_binary_base to satisfy subprojects that forbid builds
-        # under their own source tree.
-        if(IS_ABSOLUTE "${bindir}")
-            set(_luavsg_bdir "${bindir}")
-        else()
-            set(_luavsg_bdir "${_luavsg_deps_binary_base}/${bindir}")
-        endif()
-
-        add_subdirectory(
-            "${CMAKE_SOURCE_DIR}/${relpath}"
-            "${_luavsg_bdir}"
-        )
-        set(${name}_VENDORED ON PARENT_SCOPE)
-    else()
+    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/${relpath}/CMakeLists.txt")
         set(${name}_VENDORED OFF PARENT_SCOPE)
+        return()
     endif()
+
+    message(STATUS "luavsg: using vendored ${name} from ${relpath}")
+
+    if(IS_ABSOLUTE "${bindir}")
+        set(_luavsg_bdir "${bindir}")
+    else()
+        set(_luavsg_bdir "${_luavsg_deps_binary_base}/${bindir}")
+    endif()
+
+    file(MAKE_DIRECTORY "${_luavsg_bdir}")
+
+    add_subdirectory(
+        "${CMAKE_SOURCE_DIR}/${relpath}"
+        "${_luavsg_bdir}"
+    )
+
+    set(${name}_VENDORED ON PARENT_SCOPE)
 endfunction()
 
-function(_luavsg_alias_if_target alias existing)
-    if(TARGET "${existing}" AND NOT TARGET "${alias}")
-        add_library("${alias}" ALIAS "${existing}")
-    endif()
-endfunction() alias existing)
-    if(TARGET "${existing}" AND NOT TARGET "${alias}")
-        add_library("${alias}" ALIAS "${existing}")
+function(_luavsg_alias_if_target alias_name existing_name)
+    if(TARGET "${existing_name}" AND NOT TARGET "${alias_name}")
+        add_library(${alias_name} ALIAS ${existing_name})
     endif()
 endfunction()
 
@@ -142,21 +133,18 @@ set(_vulkan_lib "${_vulkan_lib_dir}/vulkan-1.lib")
 
 if(NOT EXISTS "${_vulkan_include}/vulkan/vulkan.h")
     message(FATAL_ERROR
-        "Vulkan headers not found at: ${_vulkan_include}/vulkan/vulkan.h
-"
+        "Vulkan headers not found at: ${_vulkan_include}/vulkan/vulkan.h\n"
         "VULKAN_SDK is: ${VULKAN_SDK}"
     )
 endif()
 
 if(NOT EXISTS "${_vulkan_lib}")
     message(FATAL_ERROR
-        "Vulkan import library not found at: ${_vulkan_lib}
-"
+        "Vulkan import library not found at: ${_vulkan_lib}\n"
         "VULKAN_SDK is: ${VULKAN_SDK}"
     )
 endif()
 
-# Push hints into cache so subprojects (vsg / vsgXchange) pick them up.
 _luavsg_cache_default(VULKAN_SDK PATH "${VULKAN_SDK}")
 _luavsg_cache_default(Vulkan_INCLUDE_DIR PATH "${_vulkan_include}")
 _luavsg_cache_default(Vulkan_LIBRARY FILEPATH "${_vulkan_lib}")
@@ -166,7 +154,7 @@ message(STATUS "Vulkan include:  ${Vulkan_INCLUDE_DIR}")
 message(STATUS "Vulkan library:  ${Vulkan_LIBRARY}")
 
 # -----------------------------------------------------------------------------
-# B.2: Vendored deps as subprojects (avoid find_package(Config) gaps)
+# B.2: Vendored deps as subprojects
 # -----------------------------------------------------------------------------
 
 if(LUAVSG_VENDORED_DEPS)
@@ -177,10 +165,7 @@ if(LUAVSG_VENDORED_DEPS)
     _luavsg_alias_if_target(draco::draco draco_static)
     _luavsg_alias_if_target(draco::draco draco_shared)
 
-    # Freetype
-    # Freetype forbids build dirs located under its source tree. If you run
-    # in-source builds (cmake .), we route dependency build dirs outside the repo
-    # via _luavsg_deps_binary_base (see _luavsg_add_subdir()).
+    # Freetype: use builds/cmake when present.
     if(EXISTS "${CMAKE_SOURCE_DIR}/lib/freetype/builds/cmake/CMakeLists.txt")
         message(STATUS "luavsg: using vendored freetype from lib/freetype/builds/cmake")
         add_subdirectory(
@@ -204,7 +189,6 @@ if(LUAVSG_VENDORED_DEPS)
 
     # curl
     if(LUAVSG_CURL_MINIMAL)
-        # Keep curl from pulling in a dependency cascade.
         _luavsg_cache_default(BUILD_CURL_EXE BOOL OFF)
         _luavsg_cache_default(BUILD_SHARED_LIBS BOOL OFF)
         _luavsg_cache_default(CURL_USE_SCHANNEL BOOL ON)
@@ -237,8 +221,6 @@ add_subdirectory(lib/VulkanSceneGraph)
 if(LUAVSG_ENABLE_VSGXCHANGE AND EXISTS "${CMAKE_SOURCE_DIR}/lib/vsgXchange/CMakeLists.txt")
 
     if(LUAVSG_VSGXCHANGE_MINIMAL)
-        # The exact option names vary by vsgXchange version. We set a broad set
-        # of commonly-used toggles; unknown vars are harmless.
         _luavsg_cache_default(vsgXchange_BUILD_APPLICATIONS BOOL OFF)
         _luavsg_cache_default(vsgXchange_BUILD_TESTS BOOL OFF)
 
@@ -263,9 +245,6 @@ if(LUAVSG_ENABLE_VSGXCHANGE AND EXISTS "${CMAKE_SOURCE_DIR}/lib/vsgXchange/CMake
         _luavsg_cache_default(vsgXchange_WITH_DRACO BOOL OFF)
     endif()
 
-    # Tell vsgXchange to prefer vendored deps when packages aren't installed.
-    _luavsg_cache_default(VSGXCHANGE_USE_VENDORED_DEPS BOOL ${LUAVSG_VENDORED_DEPS})
-
     add_subdirectory(lib/vsgXchange)
     set(HAVE_VSGXCHANGE ON)
 endif()
@@ -274,14 +253,9 @@ endif()
 # Application
 # -----------------------------------------------------------------------------
 
-set(SOURCES
+add_executable(myfirstvsgapplication
     src/main.cpp
 )
-
-add_executable(myfirstvsgapplication ${SOURCES})
-
-# NOTE: VulkanSceneGraph defines a "clobber" custom target already.
-# We use a repo-scoped name to avoid CMP0002 target collisions.
 
 target_link_libraries(myfirstvsgapplication
     PRIVATE
