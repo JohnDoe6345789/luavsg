@@ -81,64 +81,107 @@ if(LUAVSG_IN_SOURCE)
 endif()
 
 # -----------------------------------------------------------------------------
-# Vulkan (baked-in fallback to vendored SDK under lib/VulkanSDK)
+# Vulkan (prefer system find_package, fall back to vendored SDK under lib/VulkanSDK)
 # -----------------------------------------------------------------------------
 
-if(NOT DEFINED VULKAN_SDK OR VULKAN_SDK STREQUAL "")
-  if(DEFINED ENV{VULKAN_SDK} AND NOT "$ENV{VULKAN_SDK}" STREQUAL "")
-    set(VULKAN_SDK "$ENV{VULKAN_SDK}")
-  else()
-    file(GLOB _vulkan_sdk_candidates
-      LIST_DIRECTORIES true
-      "${CMAKE_SOURCE_DIR}/lib/VulkanSDK/*"
-    )
-    list(SORT _vulkan_sdk_candidates)
-    list(REVERSE _vulkan_sdk_candidates)
-    if(_vulkan_sdk_candidates)
-      list(GET _vulkan_sdk_candidates 0 VULKAN_SDK)
+set(_vulkan_header_found FALSE)
+set(_vulkan_library_found FALSE)
+set(_vulkan_include "")
+set(_vulkan_lib "")
+
+find_package(Vulkan QUIET)
+if(Vulkan_FOUND)
+  set(_vulkan_header_found TRUE)
+  set(_vulkan_library_found TRUE)
+
+  if(Vulkan_INCLUDE_DIRS)
+    list(GET Vulkan_INCLUDE_DIRS 0 _vulkan_include)
+  elseif(Vulkan_INCLUDE_DIR)
+    set(_vulkan_include "${Vulkan_INCLUDE_DIR}")
+  elseif(TARGET Vulkan::Vulkan)
+    get_target_property(_vulkan_include Vulkan::Vulkan INTERFACE_INCLUDE_DIRECTORIES)
+    if(_vulkan_include)
+      list(GET _vulkan_include 0 _vulkan_include)
     endif()
   endif()
-endif()
 
-if(NOT DEFINED VULKAN_SDK OR VULKAN_SDK STREQUAL "")
-  message(FATAL_ERROR
-    "VULKAN_SDK not set and no vendored SDK found at "
-    "${CMAKE_SOURCE_DIR}/lib/VulkanSDK/<version>."
-  )
-endif()
+  if(DEFINED Vulkan_LIBRARY)
+    set(_vulkan_lib "${Vulkan_LIBRARY}")
+  elseif(TARGET Vulkan::Vulkan)
+    get_target_property(_vulkan_lib Vulkan::Vulkan IMPORTED_LOCATION)
+  endif()
+else()
+  if(NOT DEFINED VULKAN_SDK OR VULKAN_SDK STREQUAL "")
+    if(DEFINED ENV{VULKAN_SDK} AND NOT "$ENV{VULKAN_SDK}" STREQUAL "")
+      set(VULKAN_SDK "$ENV{VULKAN_SDK}")
+    else()
+      file(GLOB _vulkan_sdk_candidates
+        LIST_DIRECTORIES true
+        "${CMAKE_SOURCE_DIR}/lib/VulkanSDK/*"
+      )
+      list(SORT _vulkan_sdk_candidates)
+      list(REVERSE _vulkan_sdk_candidates)
+      if(_vulkan_sdk_candidates)
+        list(GET _vulkan_sdk_candidates 0 VULKAN_SDK)
+      endif()
+    endif()
+  endif()
 
-set(_vulkan_include "${VULKAN_SDK}/Include")
-set(_vulkan_lib_dir "${VULKAN_SDK}/Lib")
-if(NOT EXISTS "${_vulkan_lib_dir}/vulkan-1.lib")
-  if(EXISTS "${VULKAN_SDK}/Lib-ARM64/vulkan-1.lib")
-    set(_vulkan_lib_dir "${VULKAN_SDK}/Lib-ARM64")
+  set(_vulkan_include "${VULKAN_SDK}/Include")
+  if(EXISTS "${_vulkan_include}/vulkan/vulkan.h")
+    set(_vulkan_header_found TRUE)
+  endif()
+
+  set(_vulkan_lib_dirs "${VULKAN_SDK}/Lib" "${VULKAN_SDK}/lib")
+  if(WIN32)
+    list(APPEND _vulkan_lib_dirs "${VULKAN_SDK}/Lib-ARM64")
+  endif()
+
+  if(WIN32)
+    foreach(_vulkan_lib_dir IN LISTS _vulkan_lib_dirs)
+      if(EXISTS "${_vulkan_lib_dir}/vulkan-1.lib")
+        set(_vulkan_lib "${_vulkan_lib_dir}/vulkan-1.lib")
+        set(_vulkan_library_found TRUE)
+        break()
+      endif()
+    endforeach()
+  else()
+    foreach(_vulkan_lib_dir IN LISTS _vulkan_lib_dirs)
+      foreach(_vulkan_candidate IN ITEMS libvulkan.so libvulkan.so.1)
+        if(EXISTS "${_vulkan_lib_dir}/${_vulkan_candidate}")
+          set(_vulkan_lib "${_vulkan_lib_dir}/${_vulkan_candidate}")
+          set(_vulkan_library_found TRUE)
+          break()
+        endif()
+      endforeach()
+      if(_vulkan_library_found)
+        break()
+      endif()
+    endforeach()
   endif()
 endif()
-set(_vulkan_lib "${_vulkan_lib_dir}/vulkan-1.lib")
 
-if(NOT EXISTS "${_vulkan_include}/vulkan/vulkan.h")
+if(NOT _vulkan_header_found OR NOT _vulkan_library_found)
   message(FATAL_ERROR
-    "Vulkan headers not found at: ${_vulkan_include}/vulkan/vulkan.h
-"
-    "VULKAN_SDK is: ${VULKAN_SDK}"
+    "Vulkan SDK not found. Header: ${_vulkan_include}/vulkan/vulkan.h; "
+    "Library: ${_vulkan_lib}; VULKAN_SDK is: ${VULKAN_SDK}"
   )
 endif()
 
-if(NOT EXISTS "${_vulkan_lib}")
-  message(FATAL_ERROR
-    "Vulkan import library not found at: ${_vulkan_lib}
-"
-    "VULKAN_SDK is: ${VULKAN_SDK}"
-  )
+if(DEFINED VULKAN_SDK AND NOT VULKAN_SDK STREQUAL "")
+  _luavsg_cache_default(VULKAN_SDK PATH "${VULKAN_SDK}")
 endif()
-
-_luavsg_cache_default(VULKAN_SDK PATH "${VULKAN_SDK}")
-_luavsg_cache_default(Vulkan_INCLUDE_DIR PATH "${_vulkan_include}")
-_luavsg_cache_default(Vulkan_LIBRARY FILEPATH "${_vulkan_lib}")
+if(_vulkan_include)
+  _luavsg_cache_default(Vulkan_INCLUDE_DIR PATH "${_vulkan_include}")
+endif()
+if(_vulkan_lib)
+  _luavsg_cache_default(Vulkan_LIBRARY FILEPATH "${_vulkan_lib}")
+endif()
 
 message(STATUS "Using VULKAN_SDK: ${VULKAN_SDK}")
 message(STATUS "Vulkan include:  ${Vulkan_INCLUDE_DIR}")
 message(STATUS "Vulkan library:  ${Vulkan_LIBRARY}")
+
 
 # -----------------------------------------------------------------------------
 # Prefer vendored package configs when present
